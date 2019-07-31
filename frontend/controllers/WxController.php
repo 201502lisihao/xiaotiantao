@@ -10,7 +10,17 @@ use Yii;
  */
 class WxController extends BaseController
 {
-	//testApi
+    //GET https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
+    const AppId = 'wx8ab7f049e4f4bee3';
+    const AppSecret = '9c62768747737a8b29c87eca90c8d9cd';
+    const Grant_type = 'authorization_code';
+    const WxGetOpenIdUrl = 'https://api.weixin.qq.com/sns/jscode2session';
+
+
+    /*
+	 * test api
+	 * https://www.qianzhuli.top/wx/test
+	 */
 	public function actionTest($id){
 		if(empty($id)){
 			$data = [];
@@ -22,4 +32,11 @@ class WxController extends BaseController
 		$status = 1;
 		return $this->apiResponse($data, $status);
 	}
+
+	/*
+	 * login
+	 */
+	public function actionLogin($code){
+        
+    }
 }
