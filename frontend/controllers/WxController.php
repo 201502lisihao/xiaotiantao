@@ -32,6 +32,18 @@ class WxController extends BaseController
 		$status = 1;
 		return $this->apiResponse($data, $status);
 	}
+	
+	public function actionHttptest(){
+		$client = new \GuzzleHttp\Client();
+		$response = $client->request('GET', 'https://api.github.com/repos/guzzle/guzzle');
+		//echo $response->getStatusCode(); # 200
+		//echo $response->getHeaderLine('content-type'); # 'application/json; charset=utf8'
+		//echo $response->getBody();
+		$data = array(
+			'code' => $response->getStatusCode(),
+		);
+		return $this->apiResponse($data,1);
+	}
 
 	/*
 	 * login

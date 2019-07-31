@@ -20,7 +20,8 @@
         "yiisoft/yii2-swiftmailer": "*",
         "pudinglabs/yii2-bootstrap-tags-input": "dev-master",
         "crazydb/yii2-ueditor": "*",
-        "yiisoft/yii2-redis": "^2.0@dev"
+        "yiisoft/yii2-redis": "^2.0@dev",
+        "guzzlehttp/guzzle": "^6.3@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
