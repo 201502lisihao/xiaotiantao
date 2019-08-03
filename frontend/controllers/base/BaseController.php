@@ -24,7 +24,7 @@ class BaseController extends Controller
 	//封装一个响应方法
 	protected function apiResponse($data,$status=0){
 		$code = self::FAIL;
-		$msg = 'fail';
+		$msg = 'fail，具体失败原因请看data中的msg字段';
 		if ($status == 1) {
 			$code = self::SUCCESS;
 			$msg = 'success';
