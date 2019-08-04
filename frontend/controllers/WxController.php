@@ -141,7 +141,9 @@ class WxController extends BaseController
         //直接拿openId当用户的utoken
         if($decryptCode == 0){
             $userData = json_decode($userData,true);
-            $userData['session_key'] = $sessionKey;
+            //session_key中可能有反斜杠，昵称中可能有emjoy表情，同意base64一下
+            $userData['session_key'] = base64_encode($sessionKey);
+            $userData['nickName'] = base64_encode($userData['nickName']);
             //var_dump($userData);exit;
             //存库
             $res = $this->addWxUser($userData);
@@ -195,7 +197,7 @@ class WxController extends BaseController
         $model->country = $userData['country'];
         $model->headimg = $userData['avatarUrl'];
         $model->add_time = time();
-        $res = $model->save();
+        $res = $model->save(false);
         return $res;
     }
 }

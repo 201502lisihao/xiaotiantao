@@ -37,7 +37,7 @@ class WxUserModel extends BaseModel
             [['open_id', 'nickname', 'language', 'city', 'province', 'country', 'headimg'], 'required'],
             [['add_time'], 'integer'],
             [['open_id', 'headimg'], 'string', 'max' => 255],
-            [['nickname', 'city', 'province', 'country'], 'string', 'max' => 200],
+            [['nickname', 'city', 'province', 'country'], 'string', 'max' => 255],
             [['gender'], 'integer', 'max' => 1],
             [['language'], 'string', 'max' => 30],
             [['open_id'], 'unique'],
