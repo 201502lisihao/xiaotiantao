@@ -1,5 +1,5 @@
 <?php
-namespace Common\Util;
+namespace frontend\tools;
 /**
  * PKCS7Encoder class
  *

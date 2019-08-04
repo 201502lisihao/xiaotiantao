@@ -3,7 +3,8 @@
 namespace frontend\controllers;
 
 use frontend\controllers\base\BaseController;
-use frontend\tools\WxBizDataCrypt;
+use frontend\tools\WXBizDataCrypt;
+use common\models\WxUserModel;
 use Yii;
 
 /**
@@ -35,6 +36,27 @@ class WxController extends BaseController
             'msg' => '服务器联通成功',
         );
         return $this->apiResponse($data,self::SUCCESS);
+    }
+
+    public function actionModeltest(){
+        //查询
+        $res = WxUserModel::find()->where(['open_id' => '3'])->asArray()->one();
+        var_dump($res);
+        exit;
+        //保存或更新
+        $model = new WxUserModel();
+        $model->open_id = '3';
+        $model->session_key = '3';
+        $model->nickname = 'test';
+        $model->gender = 't';
+        $model->language = 'test';
+        $model->city = 'test';
+        $model->province = 'test';
+        $model->country = 'test';
+        $model->headimg = 'test';
+        $model->add_time = time();
+        $res = $model->save();
+        return $this->apiResponse($res,1);
     }
 
     /*
@@ -78,16 +100,14 @@ class WxController extends BaseController
         $code = $params['code'];
         $encryptedData = $params['encryptedData'];
         $iv = $params['iv'];
-        
-        //if(empty($code) || empty($encryptedData) || empty($iv)){
-        if(true){
+        $data = array();
+
+        if(empty($code) || empty($encryptedData) || empty($iv)){
             $data = array(
                 'msg' => '参数异常,请确认请求参数后重新发起请求',
             );
             return $this->apiResponse($data);    
         }
-
-        $data = array();
 
         //初始化redis
         $cache = Yii::$app->cache;
@@ -97,31 +117,49 @@ class WxController extends BaseController
             $data['utoken'] = $utoken;
             return $this->apiResponse($data,self::SUCCESS);
         }
+        //去查wx_user表，有数据的话加缓存然后直接返回utoken
+        $res = WxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
+        if( ! empty($res['id']) && $res['id'] >= 1){
+            //查到后从新加缓存，减轻数据库压力
+            $cache->set($res['open_id'],$res,86400);
+
+            $data['success'] = self::SUCCESS;
+            $data['utoken'] = $res['open_id'];
+            return $this->apiResponse($data,self::SUCCESS);
+        }
         
-        //获取session_key
+        //缓存和数据库都未查到，去微信api获取，并存库，加缓存
+        //获取session_key & open_id
         $wxResponse = $this->getSessionKey($code);
         $sessionKey = $wxResponse['session_key'];
+        $openId = $wxResponse['openid'];
 
         //解密用户数据，保存在userData中
-        $wxCrypt = new WxBizDataCrypt(self::AppId,$session_key);
+        $wxCrypt = new WXBizDataCrypt(self::AppId,$sessionKey);
         $decryptCode = $wxCrypt->decryptData($encryptedData, $iv, $userData);
         
-        //生成新的utoken
-        $newUtoken = md5(uniqid(md5(microtime(true)),true));
-        
+        //直接拿openId当用户的utoken
         if($decryptCode == 0){
-            $userData = jsondecode($userData,true);
-            $data['success'] = 1;
-            $data['utoken'] = $newUtoken;
-            $userId = $this->addWxUser($userData);
-            if($userId < 1 || empty($userId)){
-                
+            $userData = json_decode($userData,true);
+            $userData['session_key'] = $sessionKey;
+            //var_dump($userData);exit;
+            //存库
+            $res = $this->addWxUser($userData);
+            if($res){
+                $cache->set($openId,$userData,86400);
+                $data = array(
+                    'success' => self::SUCCESS,
+                    'utoken' => $openId,
+                );
+                return $this->apiResponse($data,self::SUCCESS);
+            } else {
+                //存库失败,打日志
+                echo '存库失败';
             }
         } else {
-            
+            //用户数据解密失败,打日志
         }
-
-        return $this->apiResponse($data,self::SUCCESS);
+        return $this->apiResponse($data);
     }
 
     /*
@@ -130,13 +168,34 @@ class WxController extends BaseController
      */
     private function getSessionKey($code){
         $client = new \GuzzleHttp\Client();
-        $ret = $client->request('GET', 'https://api.weixin.qq.com/sns/jscode2session?appid=' .self::AppId. '&secret=' .self::AppSecret. '&js_code=' .$code. '&grant_type=' . self::GrantType);
-        if($ret['errcode'] != 0){
+        $resObject = $client->request('GET', 'https://api.weixin.qq.com/sns/jscode2session?appid=' .self::AppId. '&secret=' .self::AppSecret. '&js_code=' .$code. '&grant_type=' . self::GrantType);
+        $resJson = $resObject->getBody();
+        $ret = json_decode($resJson,true);
+        if(empty($ret['session_key']) || empty($ret['openid'])){
             $data = array(
                 'msg' => '微信端响应失败,具体原因：'.$ret['errmsg'],
             );
             return $this->apiResponse($data);
         }
         return $ret;
+    }
+
+    /*
+     *
+     */
+    private function addWxUser($userData){
+        $model = new WxUserModel();
+        $model->open_id = $userData['openId'];
+        $model->session_key = $userData['session_key'];
+        $model->nickname = $userData['nickName'];
+        $model->gender = $userData['gender'];
+        $model->language = $userData['language'];
+        $model->city = $userData['city'];
+        $model->province = $userData['province'];
+        $model->country = $userData['country'];
+        $model->headimg = $userData['avatarUrl'];
+        $model->add_time = time();
+        $res = $model->save();
+        return $res;
     }
 }
