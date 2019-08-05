@@ -101,7 +101,7 @@ class WxController extends BaseController
         $encryptedData = $params['encryptedData'];
         $iv = $params['iv'];
         $data = array();
-
+        //var_dump($utoken);exit;
         if(empty($code) || empty($encryptedData) || empty($iv)){
             $data = array(
                 'msg' => '参数异常,请确认请求参数后重新发起请求',
@@ -111,23 +111,24 @@ class WxController extends BaseController
 
         //初始化redis
         $cache = Yii::$app->cache;
-        //判断缓存是否过期，未过期直接返回utoken
-        if( ! empty($utoken) && $cache->get($utoken)){
-            $data['success'] = self::SUCCESS;
-            $data['utoken'] = $utoken;
-            return $this->apiResponse($data,self::SUCCESS);
-        }
-        //去查wx_user表，有数据的话加缓存然后直接返回utoken
-        $res = WxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
-        if( ! empty($res['id']) && $res['id'] >= 1){
-            //查到后从新加缓存，减轻数据库压力
-            $cache->set($res['open_id'],$res,86400);
+        if( ! empty($utoken)){
+            //判断缓存是否过期，未过期直接返回utoken
+            if($cache->exists($utoken)){
+                $data['success'] = self::SUCCESS;
+                $data['utoken'] = $utoken;
+                return $this->apiResponse($data,self::SUCCESS);
+            }
+            //去查wx_user表，有数据的话加缓存然后直接返回utoken
+            $res = WxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
+            if( ! empty($res['id']) && $res['id'] >= 1){
+                //查到后从新加缓存，减轻数据库压力
+                $cache->set($res['open_id'],$res,86400);
 
-            $data['success'] = self::SUCCESS;
-            $data['utoken'] = $res['open_id'];
-            return $this->apiResponse($data,self::SUCCESS);
+                $data['success'] = self::SUCCESS;
+                $data['utoken'] = $res['open_id'];
+                return $this->apiResponse($data,self::SUCCESS);
+            }
         }
-        
         //缓存和数据库都未查到，去微信api获取，并存库，加缓存
         //获取session_key & open_id
         $wxResponse = $this->getSessionKey($code);
@@ -186,18 +187,30 @@ class WxController extends BaseController
      *
      */
     private function addWxUser($userData){
-        $model = new WxUserModel();
-        $model->open_id = $userData['openId'];
-        $model->session_key = $userData['session_key'];
-        $model->nickname = $userData['nickName'];
-        $model->gender = $userData['gender'];
-        $model->language = $userData['language'];
-        $model->city = $userData['city'];
-        $model->province = $userData['province'];
-        $model->country = $userData['country'];
-        $model->headimg = $userData['avatarUrl'];
-        $model->add_time = time();
-        $res = $model->save(false);
-        return $res;
+        //先查库，有的话则更新
+        $res = WxUserModel::find()->where(['open_id' => $userData['openId']])->one();
+        if($res){
+            $res->nickname = $userData['nickName'];
+            $res->gender = $userData['gender'];
+            $res->language = $userData['language'];
+            $res->city = $userData['city'];
+            $res->province = $userData['province'];
+            $res->headimg = $userData['avatarUrl'];
+            $ret = $res->save(false);
+        }else{
+            $model = new WxUserModel();
+            $model->open_id = $userData['openId'];
+            $model->session_key = $userData['session_key'];
+            $model->nickname = $userData['nickName'];
+            $model->gender = $userData['gender'];
+            $model->language = $userData['language'];
+            $model->city = $userData['city'];
+            $model->province = $userData['province'];
+            $model->country = $userData['country'];
+            $model->headimg = $userData['avatarUrl'];
+            $model->add_time = time();
+            $ret = $model->save(false);
+        }
+        return $ret;
     }
 }
