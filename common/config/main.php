@@ -12,5 +12,15 @@ return [
             'port' => 6379,
             'database' => 0,
         ],
+        'log' => [
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error'],
+                    'logVars' => ['_GET'],
+                    'logFile' => '/home/wwwroot/default/xiaotiantao/logs/application.log.wf_'.date('Ymd'),
+                ],
+            ],
+        ],
     ],
 ];

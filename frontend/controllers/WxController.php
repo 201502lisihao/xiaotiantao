@@ -60,6 +60,15 @@ class WxController extends BaseController
     }
 
     /*
+     * test api
+     * https://www.qianzhuli.top/wx/logtest
+     */
+    public function actionLogtest(){
+        //code
+        Yii::error('111111111111111111');
+    }
+
+    /*
 	 * test api
 	 * https://www.qianzhuli.top/wx/cachetest
 	 */
@@ -114,6 +123,7 @@ class WxController extends BaseController
         if( ! empty($utoken)){
             //判断缓存是否过期，未过期直接返回utoken
             if($cache->exists($utoken)){
+                Yii::error('命中缓存 utoken='.$utoken);
                 $data['success'] = self::SUCCESS;
                 $data['utoken'] = $utoken;
                 return $this->apiResponse($data,self::SUCCESS);
@@ -121,6 +131,7 @@ class WxController extends BaseController
             //去查wx_user表，有数据的话加缓存然后直接返回utoken
             $res = WxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
             if( ! empty($res['id']) && $res['id'] >= 1){
+                Yii::error('命中查库');
                 //查到后从新加缓存，减轻数据库压力
                 $cache->set($res['open_id'],$res,86400);
 
@@ -149,6 +160,7 @@ class WxController extends BaseController
             //存库
             $res = $this->addWxUser($userData);
             if($res){
+                Yii::error('存库成功$userData='.json_encode($userData));
                 $cache->set($openId,$userData,86400);
                 $data = array(
                     'success' => self::SUCCESS,
@@ -165,6 +177,21 @@ class WxController extends BaseController
         return $this->apiResponse($data);
     }
 
+    /*
+     * 根据经纬度获取最近门店
+     */
+    public function actionGetneareststore($longitude, $latitude){
+        $data = array(
+            'msg' => '获取门店接口联通成功',
+            'longitude' => $longitude,
+            'latitude' => $latitude,
+        );
+        return $this->apiResponse($data,self::SUCCESS);
+    }
+
+
+    /*----------------------------------私有方法-----------------------------------*/
+    
     /*
      * @params code
      * @return ret 包含openid、session_key、unionid、errcode、errmsg
@@ -184,7 +211,7 @@ class WxController extends BaseController
     }
 
     /*
-     *
+     * 保存或更新wx_user表
      */
     private function addWxUser($userData){
         //先查库，有的话则更新
