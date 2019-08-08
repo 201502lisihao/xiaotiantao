@@ -2,6 +2,7 @@
 
 namespace frontend\service;
 
+use common\models\WxStoreModel;
 use common\models\WxUserModel;
 use frontend\service\base\WxBaseService;
 use Yii;
@@ -95,11 +96,19 @@ class WxService extends WxBaseService
         $dlat = $distance / 6371;
         $dlat = rad2deg($dlat);
         //正方形四个角的坐标
-        return array(
-            'left-top' => array('lat' => $latitude + $dlat, 'lng' => $longitude - $dlng),
-            'right-top' => array('lat' => $latitude + $dlat, 'lng' => $longitude + $dlng),
-            'left-bottom' => array('lat' => $latitude - $dlat, 'lng' => $longitude - $dlng),
-            'right-bottom' => array('lat' => $latitude - $dlat, 'lng' => $longitude + $dlng)
+        $squareArr = array(
+            'left-top' => array('lat' => round($latitude + $dlat, 5), 'lng' => round($longitude - $dlng, 5)),
+            'right-top' => array('lat' => round($latitude + $dlat, 5), 'lng' => round($longitude + $dlng, 5)),
+            'left-bottom' => array('lat' => round($latitude - $dlat, 5), 'lng' => round($longitude - $dlng, 5)),
+            'right-bottom' => array('lat' => round($latitude - $dlat, 5), 'lng' => round($longitude + $dlng, 5))
         );
+        //获取需要查询店铺的经度和维度范围
+        $minLongitude = $squareArr['left-bottom']['lng'];
+        $maxLongitude = $squareArr['right-bottom']['lng'];
+        $minLatidute = $squareArr['left-bottom']['lat'];
+        $maxLatidute = $squareArr['left-top']['lat'];
+        //数据库中获取附近门店
+        $storesArr = WxStoreModel::model()->findAllBySql("select * from wx_store where longitude between [{$minLongitude},{$maxLongitude}] and latitude between [{$minLatidute},{$maxLatidute}]")->asArray();
+        return $storesArr;
     }
 }
