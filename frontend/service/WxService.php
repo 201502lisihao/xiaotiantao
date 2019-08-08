@@ -85,7 +85,7 @@ class WxService extends WxBaseService
 
     /*
      * 获取附近所有的store信息以及距离
-     * @distance 半径，默认3km
+     * @distance 距离，默认3km
      * 6371km 地球半径
      */
     public static function getStores($longitude, $latitude, $distance = 3)
@@ -100,7 +100,7 @@ class WxService extends WxBaseService
             'left-top' => array('lat' => round($latitude + $dlat, 5), 'lng' => round($longitude - $dlng, 5)),
             'right-top' => array('lat' => round($latitude + $dlat, 5), 'lng' => round($longitude + $dlng, 5)),
             'left-bottom' => array('lat' => round($latitude - $dlat, 5), 'lng' => round($longitude - $dlng, 5)),
-            'right-bottom' => array('lat' => round($latitude - $dlat, 5), 'lng' => round($longitude + $dlng, 5))
+            'right-bottom' => array('lat' => round($latitude - $dlat, 5), 'lng' => round($longitude + $dlng, 5)),
         );
         //获取需要查询店铺的经度和维度范围
         $minLongitude = $squareArr['left-bottom']['lng'];
@@ -109,6 +109,34 @@ class WxService extends WxBaseService
         $maxLatidute = $squareArr['left-top']['lat'];
         //数据库中获取附近门店
         $storesArr = WxStoreModel::findBySql("select * from wx_store where longitude >= " . $minLongitude ." and longitude <= " . $maxLongitude . " and latitude >= " . $minLatidute . " and latitude <= " . $maxLatidute)->asArray()->all();
+        $storesArr = array_filter($storesArr, null, 'id');
+        //计算附近门店到用户的距离
+        foreach ($storesArr as $id => $storeInfo) {
+            $storeDistance = self::getDistance($storeInfo['longitude'], $storeInfo['latitude'], $longitude, $latitude);
+            if (!empty($storeInfo)) {
+                $storesArr[$id]['store_distance'] = $storeDistance;
+            }
+        }
         return $storesArr;
+    }
+
+    /*
+     * 获取两组经纬度直接的距离
+     * @params longitude1 latitude1 店铺经纬度
+     * @params longitude2 latitude2 用户当前经纬度
+     */
+    private function getDistance($longitude1, $latitude1, $longitude2, $latitude2)
+    {
+        //将角度转为狐度
+        $radLng1 = deg2rad($longitude1);
+        $radLng2 = deg2rad($longitude2);
+        $radLat1 = deg2rad($latitude1);//deg2rad()函数将角度转换为弧度
+        $radLat2 = deg2rad($latitude2);
+
+        $a = $radLat1 - $radLat2;
+        $b = $radLng1 - $radLng2;
+        $distance = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6371;
+        return round($distance, 2);
+
     }
 }
