@@ -108,7 +108,7 @@ class WxService extends WxBaseService
         $minLatidute = $squareArr['left-bottom']['lat'];
         $maxLatidute = $squareArr['left-top']['lat'];
         //数据库中获取附近门店
-        $storesArr = WxStoreModel::model()->findAllBySql("select * from wx_store where longitude between [{$minLongitude},{$maxLongitude}] and latitude between [{$minLatidute},{$maxLatidute}]")->asArray();
+        $storesArr = WxStoreModel::findBySql("select * from wx_store where longitude >= " . $minLongitude ." and longitude <= " . $maxLongitude . " and latitude >= " . $minLatidute . " and latitude <= " . $maxLatidute)->asArray()->all();
         return $storesArr;
     }
 }
