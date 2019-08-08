@@ -77,8 +77,7 @@ class WxService extends WxBaseService
     {
         //获取附近的门店
         $storesArr = self::getStores($longitude, $latitude);
-        var_dump($storesArr);
-        exit;
+        return $storesArr;
         //计算距离，返回最近的门店信息
 
     }
