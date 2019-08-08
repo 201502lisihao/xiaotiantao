@@ -18,9 +18,9 @@ class WxService extends WxBaseService
     const AppSecret = '9c62768747737a8b29c87eca90c8d9cd';
     const GrantType = 'authorization_code';
 
-    /*
-     * @params code
-     * @return ret 包含openid、session_key、unionid、errcode、errmsg
+    /**
+     * @param $code
+     * @return array|mixed 包含openid、session_key、unionid、errcode、errmsg
      */
     public static function getSessionKey($code)
     {
@@ -35,10 +35,12 @@ class WxService extends WxBaseService
         return $ret;
     }
 
-    /*
+    /**
      * 保存或更新wx_user表
+     * @param $userData
+     * @return bool
      */
-    public static function addWxUser($userData): bool
+    public static function addWxUser($userData)
     {
         //参数校验
         if (empty($userData['openId'])) {
@@ -71,13 +73,16 @@ class WxService extends WxBaseService
         return $ret;
     }
 
-    /*
+    /**
      * 根据经纬度获取最近的门店
+     * @param $longitude
+     * @param $latitude
+     * @return array|mixed
      */
     public static function getNearestStore($longitude, $latitude)
     {
         //获取附近的门店
-        $storesArr = self::getStores($longitude, $latitude);
+        $storesArr = self::getNearlyStores($longitude, $latitude);
         if(empty($storesArr)){
             return [];
         }
@@ -95,12 +100,14 @@ class WxService extends WxBaseService
         return $nearestStoreInfo;
     }
 
-    /*
-     * 获取附近所有的store信息以及距离
-     * @distance 距离，默认5km
-     * 6371km 地球半径
+    /**
+     * 获取附近所有的store信息以及距离，默认范围5km
+     * @param $longitude
+     * @param $latitude
+     * @param int $distance
+     * @return array
      */
-    public static function getStores($longitude, $latitude, $distance = 5)
+    public static function getNearlyStores($longitude, $latitude, $distance = 5)
     {
         $dlng = 2 * asin(sin($distance / (2 * 6371)) / cos(deg2rad($latitude)));
         $dlng = rad2deg($dlng);
@@ -132,10 +139,13 @@ class WxService extends WxBaseService
         return $storesArr;
     }
 
-    /*
-     * 获取两组经纬度直接的距离
-     * @params longitude1 latitude1 店铺经纬度
-     * @params longitude2 latitude2 用户当前经纬度
+    /**
+     * 获取距离，保留小数点后2位，单位是km
+     * @param $longitude1 门店经纬度
+     * @param $latitude1
+     * @param $longitude2 用户当前经纬度
+     * @param $latitude2
+     * @return float
      */
     private function getDistance($longitude1, $latitude1, $longitude2, $latitude2)
     {
@@ -149,6 +159,5 @@ class WxService extends WxBaseService
         $b = $radLng1 - $radLng2;
         $distance = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6371;
         return round($distance, 2);
-
     }
 }
