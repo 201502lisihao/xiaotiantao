@@ -19,22 +19,24 @@ class BaseController extends Controller
 			return false;
 		}
 		return true;
-	}	
+    }
 
-	//封装一个响应方法
-	protected function apiResponse($data,$status=0){
-		$code = self::FAIL;
-		$msg = 'fail，具体失败原因请看data中的msg字段';
-		if ($status == 1) {
-			$code = self::SUCCESS;
-			$msg = 'success';
-		}
-		$ret = array(
-			'code' => $code,
-			'msg' => $msg,
-			'data' => $data
-		);
-		$response = json_encode($ret);
+    /**
+     * @param $data
+     * @param int $status
+     * @return false|string
+     */
+    protected function apiResponse($data, $status = 1)
+    {
+        $code = self::SUCCESS;
+        $msg = 'api响应成功';
+        if ($status == 0) {
+            $code = self::FAIL;
+            $msg = 'api响应失败';
+        }
+        $data['code'] = $code;
+        $data['msg'] = $data['msg'] ?? $msg;
+        $response = json_encode($data);
 		return $response;
 	}
 }

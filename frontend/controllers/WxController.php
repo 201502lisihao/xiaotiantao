@@ -14,11 +14,11 @@ use Yii;
 class WxController extends BaseController
 {
 
-    const SUCCESS = 1;
+    const FAIL = 0;
     const AppId = 'wx8ab7f049e4f4bee3';
     public $enableCsrfValidation = false; //禁用csrf，否则取不到post参数
 
-    /*
+    /**
      * login
      * @params utoken 用户唯一登录标识
      * @params code
@@ -35,7 +35,6 @@ class WxController extends BaseController
         $encryptedData = $params['encryptedData'];
         $iv = $params['iv'];
         $data = array();
-        //var_dump($utoken);exit;
         if (empty($code) || empty($encryptedData) || empty($iv)) {
             $data = array(
                 'msg' => '参数异常,请确认请求参数后重新发起请求',
@@ -49,9 +48,8 @@ class WxController extends BaseController
             //判断缓存是否过期，未过期直接返回utoken
             if ($cache->exists($utoken)) {
                 Yii::error('命中缓存 utoken=' . $utoken);
-                $data['success'] = self::SUCCESS;
                 $data['utoken'] = $utoken;
-                return $this->apiResponse($data, self::SUCCESS);
+                return $this->apiResponse($data);
             }
             //去查wx_user表，有数据的话加缓存然后直接返回utoken
             $res = WxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
@@ -59,10 +57,8 @@ class WxController extends BaseController
                 Yii::error('命中查库');
                 //查到后从新加缓存，减轻数据库压力
                 $cache->set($res['open_id'], $res, 86400);
-
-                $data['success'] = self::SUCCESS;
                 $data['utoken'] = $res['open_id'];
-                return $this->apiResponse($data, self::SUCCESS);
+                return $this->apiResponse($data);
             }
         }
         //缓存和数据库都未查到，去微信api获取，并存库，加缓存
@@ -93,21 +89,19 @@ class WxController extends BaseController
                 Yii::error('存库成功$userData=' . json_encode($userData));
                 $cache->set($openId, $userData, 86400);
                 $data = array(
-                    'success' => self::SUCCESS,
                     'utoken' => $openId,
                 );
-                return $this->apiResponse($data, self::SUCCESS);
+                return $this->apiResponse($data);
             } else {
-                //存库失败,打日志
-                echo '存库失败';
+                Yii::error('WxService::addWxUser存库失败');
             }
         } else {
-            //用户数据解密失败,打日志
+            Yii::error('用户数据解密失败');
         }
         return $this->apiResponse($data);
     }
 
-    /*
+    /**
      * 根据经纬度获取最近门店
      * @params longitude 当前经度
      * @params latitude 当前维度
@@ -116,9 +110,22 @@ class WxController extends BaseController
     {
         $nearestStoreInfo = WxService::getNearestStore($longitude, $latitude);
         $data = array(
-            'msg' => '服务器联通成功',
             'nearest_store_info' => $nearestStoreInfo,
         );
-        return $this->apiResponse($data, self::SUCCESS);
+        return $this->apiResponse($data);
+    }
+
+    /**
+     * 根据经纬度获取附近的门店
+     * @params longitude
+     * @params latitude
+     */
+    public function actionGetnearlystores(float $longitude, float $latitude)
+    {
+        $nearlyStoresInfo = WxService::getNearlyStores($longitude, $latitude);
+        $data = array(
+            'nearly_stores_info' => $nearlyStoresInfo,
+        );
+        return $this->apiResponse($data);
     }
 }
