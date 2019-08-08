@@ -80,19 +80,19 @@ class WxService extends WxBaseService
         $storesArr = self::getStores($longitude, $latitude);
         if(empty($storesArr)){
             return [];
-        } 
-        return $storesArr;
+        }
+        //return $storesArr;
         //计算距离，返回最近的门店信息
-        //foreach($storesArr as $key => $store){
-        //    $minDistance = 10.00;
-        //    if( ! empty($store['store_distance'])){
-        //        if($store['store_distance'] < $minDistance){
-        //            $minDistance = $store['store_distance'];
-        //            $nearestKey = $key;
-        //    }
-        //}
-        //$nearestStoreInfo = $storesArr[$nearestKey];
-        //return $nearestStoreInfo;
+        $minDistance = 99.00;
+        $nearestKey = 0;
+        foreach ($storesArr as $key => $store) {
+            if (!empty($store['store_distance']) && $store['store_distance'] < $minDistance) {
+                $minDistance = $store['store_distance'];
+                $nearestKey = $key;
+            }
+        }
+        $nearestStoreInfo = $storesArr[$nearestKey];
+        return $nearestStoreInfo;
     }
 
     /*
@@ -121,13 +121,13 @@ class WxService extends WxBaseService
         $maxLatidute = $squareArr['left-top']['lat'];
         //数据库中获取附近门店
         $storesArr = WxStoreModel::findBySql("select * from wx_store where longitude >= " . $minLongitude ." and longitude <= " . $maxLongitude . " and latitude >= " . $minLatidute . " and latitude <= " . $maxLatidute . ";")->asArray()->all();
-        //$storesArr = array_column($storesArr, null, 'id');
+        if (empty($storesArr)) {
+            return [];
+        }
         //计算附近门店到用户的距离
         foreach ($storesArr as $id => $storeInfo) {
             $storeDistance = self::getDistance($storeInfo['longitude'], $storeInfo['latitude'], $longitude, $latitude);
-            if (!empty($storeInfo)) {
-                $storesArr[$id]['store_distance'] = $storeDistance;
-            }
+            $storesArr[$id]['store_distance'] = $storeDistance;
         }
         return $storesArr;
     }
