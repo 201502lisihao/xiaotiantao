@@ -88,7 +88,7 @@ class WxService extends WxBaseService
      * @distance 距离，默认3km
      * 6371km 地球半径
      */
-    public static function getStores($longitude, $latitude, $distance = 3)
+    public static function getStores($longitude, $latitude, $distance = 10)
     {
         $dlng = 2 * asin(sin($distance / (2 * 6371)) / cos(deg2rad($latitude)));
         $dlng = rad2deg($dlng);
@@ -108,7 +108,7 @@ class WxService extends WxBaseService
         $minLatidute = $squareArr['left-bottom']['lat'];
         $maxLatidute = $squareArr['left-top']['lat'];
         //数据库中获取附近门店
-        $storesArr = WxStoreModel::findBySql("select * from wx_store where longitude >= " . $minLongitude ." and longitude <= " . $maxLongitude . " and latitude >= " . $minLatidute . " and latitude <= " . $maxLatidute)->asArray()->all();
+        $storesArr = WxStoreModel::findBySql("select * from wx_store where longitude >= " . $minLongitude ." and longitude <= " . $maxLongitude . " and latitude >= " . $minLatidute . " and latitude <= " . $maxLatidute . ";")->asArray()->all();
         $storesArr = array_column($storesArr, null, 'id');
         //计算附近门店到用户的距离
         foreach ($storesArr as $id => $storeInfo) {
@@ -117,6 +117,8 @@ class WxService extends WxBaseService
                 $storesArr[$id]['store_distance'] = $storeDistance;
             }
         }
+        //查定位不准的问题
+        //Yii::error(json_encode($storesArr));
         return $storesArr;
     }
 
@@ -130,7 +132,7 @@ class WxService extends WxBaseService
         //将角度转为狐度
         $radLng1 = deg2rad($longitude1);
         $radLng2 = deg2rad($longitude2);
-        $radLat1 = deg2rad($latitude1);//deg2rad()函数将角度转换为弧度
+        $radLat1 = deg2rad($latitude1);
         $radLat2 = deg2rad($latitude2);
 
         $a = $radLat1 - $radLat2;

@@ -15,6 +15,7 @@ class WxController extends BaseController
 {
 
     const SUCCESS = 1;
+    const AppId = 'wx8ab7f049e4f4bee3';
     public $enableCsrfValidation = false; //禁用csrf，否则取不到post参数
 
     /*
@@ -111,7 +112,7 @@ class WxController extends BaseController
      * @params longitude 当前经度
      * @params latitude 当前维度
      */
-    public function actionGetneareststore($longitude, $latitude)
+    public function actionGetneareststore(float $longitude, float $latitude)
     {
         $nearestStoreInfo = WxService::getNearestStore($longitude, $latitude);
         $data = array(
