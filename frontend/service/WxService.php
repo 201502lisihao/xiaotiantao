@@ -12,10 +12,10 @@ use Yii;
 
 class WxService extends WxBaseService
 {
-    public static function test()
-    {
-        return 'test';
-    }
+    const WxGetOpenIdUrl = 'https://api.weixin.qq.com/sns/jscode2session';//微信获取openId和session_key的url
+    const AppId = 'wx8ab7f049e4f4bee3';
+    const AppSecret = '9c62768747737a8b29c87eca90c8d9cd';
+    const GrantType = 'authorization_code';
 
     /*
      * @params code
@@ -24,7 +24,7 @@ class WxService extends WxBaseService
     public static function getSessionKey($code)
     {
         $client = new \GuzzleHttp\Client();
-        $resObject = $client->request('GET', 'https://api.weixin.qq.com/sns/jscode2session?appid=' . self::AppId . '&secret=' . self::AppSecret . '&js_code=' . $code . '&grant_type=' . self::GrantType);
+        $resObject = $client->request('GET', self::WxGetOpenIdUrl . '?appid=' . self::AppId . '&secret=' . self::AppSecret . '&js_code=' . $code . '&grant_type=' . self::GrantType);
         $resJson = $resObject->getBody();
         $ret = json_decode($resJson, true);
         if (empty($ret['session_key']) || empty($ret['openid'])) {
@@ -68,5 +68,39 @@ class WxService extends WxBaseService
             $ret = $model->save(false);
         }
         return $ret;
+    }
+
+    /*
+     * 根据经纬度获取最近的门店
+     */
+    public static function getNearestStore($longitude, $latitude)
+    {
+        //获取附近的门店
+        $storesArr = self::getStores($longitude, $latitude);
+        var_dump($storesArr);
+        exit;
+        //计算距离，返回最近的门店信息
+
+    }
+
+    /*
+     * 获取附近所有的store信息以及距离
+     * @distance 半径，默认3km
+     * 6371km 地球半径
+     */
+    public static function getStores($longitude, $latitude, $distance = 3)
+    {
+        $dlng = 2 * asin(sin($distance / (2 * 6371)) / cos(deg2rad($latitude)));
+        $dlng = rad2deg($dlng);
+
+        $dlat = $distance / 6371;
+        $dlat = rad2deg($dlat);
+        //正方形四个角的坐标
+        return array(
+            'left-top' => array('lat' => $latitude + $dlat, 'lng' => $longitude - $dlng),
+            'right-top' => array('lat' => $latitude + $dlat, 'lng' => $longitude + $dlng),
+            'left-bottom' => array('lat' => $latitude - $dlat, 'lng' => $longitude - $dlng),
+            'right-bottom' => array('lat' => $latitude - $dlat, 'lng' => $longitude + $dlng)
+        );
     }
 }

@@ -15,10 +15,6 @@ class WxController extends BaseController
 {
 
     const SUCCESS = 1;
-    const AppId = 'wx8ab7f049e4f4bee3';
-    const AppSecret = '9c62768747737a8b29c87eca90c8d9cd';
-    const GrantType = 'authorization_code';
-    const WxGetOpenIdUrl = 'https://api.weixin.qq.com/sns/jscode2session';
     public $enableCsrfValidation = false; //禁用csrf，否则取不到post参数
 
     /*
@@ -112,14 +108,15 @@ class WxController extends BaseController
 
     /*
      * 根据经纬度获取最近门店
+     * @params longitude 当前经度
+     * @params latitude 当前维度
      */
     public function actionGetneareststore($longitude, $latitude)
     {
-        $msg = WxService::test();
+        $nearestStoreInfo = WxService::getNearestStore($longitude, $latitude);
         $data = array(
-            'msg' => $msg,
-            'longitude' => $longitude,
-            'latitude' => $latitude,
+            'msg' => '服务器联通成功',
+            'nearest_store_info' => $nearestStoreInfo,
         );
         return $this->apiResponse($data, self::SUCCESS);
     }
