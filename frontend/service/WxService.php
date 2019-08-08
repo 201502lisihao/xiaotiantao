@@ -109,7 +109,7 @@ class WxService extends WxBaseService
         $maxLatidute = $squareArr['left-top']['lat'];
         //数据库中获取附近门店
         $storesArr = WxStoreModel::findBySql("select * from wx_store where longitude >= " . $minLongitude ." and longitude <= " . $maxLongitude . " and latitude >= " . $minLatidute . " and latitude <= " . $maxLatidute)->asArray()->all();
-        $storesArr = array_filter($storesArr, null, 'id');
+        $storesArr = array_column($storesArr, null, 'id');
         //计算附近门店到用户的距离
         foreach ($storesArr as $id => $storeInfo) {
             $storeDistance = self::getDistance($storeInfo['longitude'], $storeInfo['latitude'], $longitude, $latitude);
