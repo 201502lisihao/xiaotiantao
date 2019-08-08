@@ -78,17 +78,29 @@ class WxService extends WxBaseService
     {
         //获取附近的门店
         $storesArr = self::getStores($longitude, $latitude);
+        if(empty($storesArr)){
+            return [];
+        } 
         return $storesArr;
         //计算距离，返回最近的门店信息
-
+        //foreach($storesArr as $key => $store){
+        //    $minDistance = 10.00;
+        //    if( ! empty($store['store_distance'])){
+        //        if($store['store_distance'] < $minDistance){
+        //            $minDistance = $store['store_distance'];
+        //            $nearestKey = $key;
+        //    }
+        //}
+        //$nearestStoreInfo = $storesArr[$nearestKey];
+        //return $nearestStoreInfo;
     }
 
     /*
      * 获取附近所有的store信息以及距离
-     * @distance 距离，默认3km
+     * @distance 距离，默认5km
      * 6371km 地球半径
      */
-    public static function getStores($longitude, $latitude, $distance = 10)
+    public static function getStores($longitude, $latitude, $distance = 5)
     {
         $dlng = 2 * asin(sin($distance / (2 * 6371)) / cos(deg2rad($latitude)));
         $dlng = rad2deg($dlng);
@@ -109,7 +121,7 @@ class WxService extends WxBaseService
         $maxLatidute = $squareArr['left-top']['lat'];
         //数据库中获取附近门店
         $storesArr = WxStoreModel::findBySql("select * from wx_store where longitude >= " . $minLongitude ." and longitude <= " . $maxLongitude . " and latitude >= " . $minLatidute . " and latitude <= " . $maxLatidute . ";")->asArray()->all();
-        $storesArr = array_column($storesArr, null, 'id');
+        //$storesArr = array_column($storesArr, null, 'id');
         //计算附近门店到用户的距离
         foreach ($storesArr as $id => $storeInfo) {
             $storeDistance = self::getDistance($storeInfo['longitude'], $storeInfo['latitude'], $longitude, $latitude);
@@ -117,8 +129,6 @@ class WxService extends WxBaseService
                 $storesArr[$id]['store_distance'] = $storeDistance;
             }
         }
-        //查定位不准的问题
-        //Yii::error(json_encode($storesArr));
         return $storesArr;
     }
 
