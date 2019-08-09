@@ -39,7 +39,7 @@ class WxController extends BaseController
             $data = array(
                 'msg' => '参数异常,请确认请求参数后重新发起请求',
             );
-            return $this->apiResponse($data);
+            return $this->apiResponse($data, self::FAIL);
         }
 
         //初始化redis
@@ -48,7 +48,10 @@ class WxController extends BaseController
             //判断缓存是否过期，未过期直接返回utoken
             if ($cache->exists($utoken)) {
                 Yii::error('命中缓存 utoken=' . $utoken);
-                $data['utoken'] = $utoken;
+                $data = array(
+                    'utoken' => $utoken,
+                    'userId' => $cache->get($utoken)
+                );
                 return $this->apiResponse($data);
             }
             //去查wx_user表，有数据的话加缓存然后直接返回utoken
@@ -68,7 +71,7 @@ class WxController extends BaseController
             $data = array(
                 'msg' => '微信登录api响应失败',
             );
-            return $this->apiResponse($data);
+            return $this->apiResponse($data, self::FAIL);
         }
         $sessionKey = $wxResponse['session_key'];
         $openId = $wxResponse['openid'];
@@ -83,13 +86,14 @@ class WxController extends BaseController
             //session_key中可能有反斜杠，昵称中可能有emjoy表情，同意base64一下
             $userData['session_key'] = base64_encode($sessionKey);
             $userData['nickName'] = base64_encode($userData['nickName']);
-            //存库
+            //存库,成功返回id，失败返回0
             $res = WxService::addWxUser($userData);
             if ($res) {
                 Yii::error('存库成功$userData=' . json_encode($userData));
-                $cache->set($openId, $userData, 86400);
+                $cache->set($openId, $res, 86400);
                 $data = array(
                     'utoken' => $openId,
+                    'user_id' => $res
                 );
                 return $this->apiResponse($data);
             } else {
@@ -98,7 +102,7 @@ class WxController extends BaseController
         } else {
             Yii::error('用户数据解密失败');
         }
-        return $this->apiResponse($data);
+        return $this->apiResponse($data, self::FAIL);
     }
 
     /**
@@ -128,4 +132,17 @@ class WxController extends BaseController
         );
         return $this->apiResponse($data);
     }
+
+//    public function actionGetorderlistByUserId($userId)
+//    {
+//        if (empty($userId)) {
+//            $data = array(
+//                'msg' => '传入的userId为空'
+//            );
+//            return $this->apiResponse($data, self::FAIL);
+//        }
+//        //userId对应wx_user表中id字段
+//        $orderList =
+//
+//    }
 }

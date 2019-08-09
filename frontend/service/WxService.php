@@ -38,25 +38,30 @@ class WxService extends WxBaseService
     /**
      * 保存或更新wx_user表
      * @param $userData
-     * @return bool
+     * @return int
      */
     public static function addWxUser($userData)
     {
         //参数校验
         if (empty($userData['openId'])) {
-            return false;
+            return 0;
         }
-        //先查库，有的话则更新
         $res = WxUserModel::find()->where(['open_id' => $userData['openId']])->one();
         if ($res) {
+            //先查库，有的话则更新并返回id
             $res->nickname = $userData['nickName'];
             $res->gender = $userData['gender'];
             $res->language = $userData['language'];
             $res->city = $userData['city'];
             $res->province = $userData['province'];
             $res->headimg = $userData['avatarUrl'];
-            $ret = $res->save(false);
+            if ($res->save(false)) {
+                $ret = $res->id;
+            } else {
+                $ret = 0;
+            }
         } else {
+            //否者插入，并返回id
             $model = new WxUserModel();
             $model->open_id = $userData['openId'];
             $model->session_key = $userData['session_key'];
@@ -68,7 +73,11 @@ class WxService extends WxBaseService
             $model->country = $userData['country'];
             $model->headimg = $userData['avatarUrl'];
             $model->add_time = time();
-            $ret = $model->save(false);
+            if ($model->save(false)) {
+                $ret = $model->attributes['id'];
+            } else {
+                $ret = 0;
+            }
         }
         return $ret;
     }
