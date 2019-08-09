@@ -50,7 +50,7 @@ class WxController extends BaseController
                 Yii::error('命中缓存 utoken=' . $utoken);
                 $data = array(
                     'utoken' => $utoken,
-                    'userId' => $cache->get($utoken)
+                    'user_id' => $cache->get($utoken)
                 );
                 return $this->apiResponse($data);
             }
@@ -59,8 +59,11 @@ class WxController extends BaseController
             if (!empty($res['id']) && $res['id'] >= 1) {
                 Yii::error('命中查库');
                 //查到后从新加缓存，减轻数据库压力
-                $cache->set($res['open_id'], $res, 86400);
-                $data['utoken'] = $res['open_id'];
+                $cache->set($res['open_id'], $res['id'], 86400);
+                $data = array(
+                    'utoken' => $res['open_id'],
+                    'user_id' => $res['id']
+                );
                 return $this->apiResponse($data);
             }
         }
