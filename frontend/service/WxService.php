@@ -114,12 +114,12 @@ class WxService extends WxBaseService
 
         $dlat = $distance / 6371;
         $dlat = rad2deg($dlat);
-        //正方形四个角的坐标
+        //正方形四个角的坐标,经纬度小数点后6位，精确度1米
         $squareArr = array(
-            'left-top' => array('lat' => round($latitude + $dlat, 5), 'lng' => round($longitude - $dlng, 5)),
-            'right-top' => array('lat' => round($latitude + $dlat, 5), 'lng' => round($longitude + $dlng, 5)),
-            'left-bottom' => array('lat' => round($latitude - $dlat, 5), 'lng' => round($longitude - $dlng, 5)),
-            'right-bottom' => array('lat' => round($latitude - $dlat, 5), 'lng' => round($longitude + $dlng, 5)),
+            'left-top' => array('lat' => round($latitude + $dlat, 6), 'lng' => round($longitude - $dlng, 6)),
+            'right-top' => array('lat' => round($latitude + $dlat, 6), 'lng' => round($longitude + $dlng, 6)),
+            'left-bottom' => array('lat' => round($latitude - $dlat, 6), 'lng' => round($longitude - $dlng, 6)),
+            'right-bottom' => array('lat' => round($latitude - $dlat, 6), 'lng' => round($longitude + $dlng, 6)),
         );
         //获取需要查询店铺的经度和维度范围
         $minLongitude = $squareArr['left-bottom']['lng'];
