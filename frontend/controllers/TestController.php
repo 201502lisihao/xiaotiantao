@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\WxUserModel;
+use common\models\WxOrdersModel;
 use frontend\controllers\base\BaseController;
 use Yii;
 
@@ -93,5 +94,10 @@ class TestController extends BaseController
             'header' => $response->getHeaderLine('content-type'),
         );
         return $this->apiResponse($data, self::SUCCESS);
+    }
+
+    public function actionOrdersmodeltest(){
+        $res = WxOrdersModel::find()->where(['id' => 0])->asArray()->one();
+        var_dump($res);
     }
 }
