@@ -34,7 +34,7 @@ class WxOrdersModel extends BaseModel
     {
         return [
             [['id', 'order_no', 'create_at'], 'required'],
-            [['id', 'user_id', 'get_time', 'type', 'create_at'], 'integer'],
+            [['id', 'user_id', 'get_time', 'create_at'], 'integer'],
             [['price'], 'number'],
             [['order_no', 'order_status', 'store_name'], 'string', 'max' => 255],
             [['id'], 'unique'],

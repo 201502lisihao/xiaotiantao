@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\models\WxUserModel;
-use common\models\WxOrdersModel;
 use frontend\controllers\base\BaseController;
 use frontend\service\WxService;
 use frontend\tools\WXBizDataCrypt;
@@ -142,7 +141,7 @@ class WxController extends BaseController
      * @params userId
      * @return array
      */
-    public function actionGetorderlistByUserId($userId)
+    public function actionGetorderlistbyuserid($userId)
     {
         if (empty($userId)) {
             $data = array(
@@ -151,9 +150,9 @@ class WxController extends BaseController
             return $this->apiResponse($data, self::FAIL);
         }
         //userId对应wx_user表中id字段
-        $orderList = WxOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
+        $orderList = WxService::getOrderListByUserId($userId);
         $data = array(
-            'order_list' => $order_list;
+            'order_list' => $orderList,
         );
         return $this->apiResponse($data);
     }

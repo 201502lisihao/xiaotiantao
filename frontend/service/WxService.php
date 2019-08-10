@@ -3,6 +3,7 @@
 namespace frontend\service;
 
 use common\models\WxStoreModel;
+use common\models\WxOrdersModel;
 use common\models\WxUserModel;
 use frontend\service\base\WxBaseService;
 use Yii;
@@ -147,6 +148,21 @@ class WxService extends WxBaseService
         }
         return $storesArr;
     }
+
+    public function getOrderListByUserId($userId){
+        $resArr = WxOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
+        $orderList = array();
+        foreach($resArr as $order){
+            $order['create_at'] = date('Y-m-d H:i', $order['create_at']);
+            if($order['get_time']){
+                $order['get_time'] = date('Y-m-d H:i', $order['get_time']);
+            }
+            $orderList[] = $order;
+        }
+
+        return $orderList;
+    }
+    //-----------------------------private 方法------------------------------------
 
     /**
      * 获取距离，保留小数点后2位，单位是km
