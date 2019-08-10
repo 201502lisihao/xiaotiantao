@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\WxUserModel;
+use common\models\WxOrdersModel;
 use frontend\controllers\base\BaseController;
 use frontend\service\WxService;
 use frontend\tools\WXBizDataCrypt;
@@ -136,16 +137,24 @@ class WxController extends BaseController
         return $this->apiResponse($data);
     }
 
-//    public function actionGetorderlistByUserId($userId)
-//    {
-//        if (empty($userId)) {
-//            $data = array(
-//                'msg' => '传入的userId为空'
-//            );
-//            return $this->apiResponse($data, self::FAIL);
-//        }
-//        //userId对应wx_user表中id字段
-//        $orderList =
-//
-//    }
+    /**
+     * 根据user_id查用户所有订单
+     * @params userId
+     * @return array
+     */
+    public function actionGetorderlistByUserId($userId)
+    {
+        if (empty($userId)) {
+            $data = array(
+                'msg' => '传入的userId为空'
+            );
+            return $this->apiResponse($data, self::FAIL);
+        }
+        //userId对应wx_user表中id字段
+        $orderList = WxOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
+        $data = array(
+            'order_list' => $order_list;
+        );
+        return $this->apiResponse($data);
+    }
 }
