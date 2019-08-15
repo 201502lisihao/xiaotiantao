@@ -117,7 +117,7 @@ class WxService extends WxBaseService
      * @param int $distance
      * @return array
      */
-    public static function getNearlyStores($longitude, $latitude, $distance = 5)
+    public static function getNearlyStores($longitude, $latitude, $distance = 10)
     {
         $dlng = 2 * asin(sin($distance / (2 * 6371)) / cos(deg2rad($latitude)));
         $dlng = rad2deg($dlng);
