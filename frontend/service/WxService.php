@@ -177,7 +177,8 @@ class WxService extends WxBaseService
         $goodslist = WxGoodsModel::find()->where(['store_id' => $storeId])->asArray()->all();
         $retList = array();
         foreach ($goodslist as $key => $good) {
-            $retList[$good['type_name']][] = $good;
+            $retList[$good['type_name']]['name'] = $good['type_name'];
+            $retList[$good['type_name']]['goods'][] = $good;
         }
         return $retList;
     }
