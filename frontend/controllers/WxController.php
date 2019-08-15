@@ -156,4 +156,23 @@ class WxController extends BaseController
         );
         return $this->apiResponse($data);
     }
+
+    /**
+     * 商品列表页
+     * @param $storeId
+     * @return false|string
+     */
+    public function actionGoodslist($storeId)
+    {
+        if (empty($storeId)) {
+            $data = array();
+            return $this->apiResponse($data, self::FAIL);
+        }
+        $goodsList = WxService::getGoodsListByStoreList($storeId);
+        $data = array(
+            'good_list' => $goodsList,
+            'msg' => '获取商品列表成功',
+        );
+        return $this->apiResponse($data);
+    }
 }

@@ -2,8 +2,8 @@
 
 namespace frontend\service;
 
-use common\models\WxStoreModel;
 use common\models\WxOrdersModel;
+use common\models\WxStoreModel;
 use common\models\WxUserModel;
 use frontend\service\base\WxBaseService;
 use Yii;
@@ -149,21 +149,6 @@ class WxService extends WxBaseService
         return $storesArr;
     }
 
-    public function getOrderListByUserId($userId){
-        $resArr = WxOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
-        $orderList = array();
-        foreach($resArr as $order){
-            $order['create_at'] = date('Y-m-d H:i', $order['create_at']);
-            if($order['get_time']){
-                $order['get_time'] = date('Y-m-d H:i', $order['get_time']);
-            }
-            $orderList[] = $order;
-        }
-
-        return $orderList;
-    }
-    //-----------------------------private 方法------------------------------------
-
     /**
      * 获取距离，保留小数点后2位，单位是km
      * @param $longitude1 门店经纬度
@@ -184,5 +169,26 @@ class WxService extends WxBaseService
         $b = $radLng1 - $radLng2;
         $distance = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6371;
         return round($distance, 2);
+    }
+
+    public static function getGoodsListByStoreList($storeId)
+    {
+        return array();
+    }
+
+    //-----------------------------private 方法------------------------------------
+
+    public function getOrderListByUserId($userId){
+        $resArr = WxOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
+        $orderList = array();
+        foreach($resArr as $order){
+            $order['create_at'] = date('Y-m-d H:i', $order['create_at']);
+            if($order['get_time']){
+                $order['get_time'] = date('Y-m-d H:i', $order['get_time']);
+            }
+            $orderList[] = $order;
+        }
+
+        return $orderList;
     }
 }
