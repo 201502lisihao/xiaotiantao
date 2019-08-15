@@ -33,7 +33,7 @@ class WxGoodsModel extends BaseModel
     {
         return [
             [['price'], 'number'],
-            [['create_at'], 'integer'],
+            [['create_at', 'store_id'], 'integer'],
             [['name', 'description', 'image_url', 'type_name'], 'string', 'max' => 255],
         ];
     }
@@ -50,6 +50,7 @@ class WxGoodsModel extends BaseModel
             'image_url' => Yii::t('app', 'Image Url'),
             'price' => Yii::t('app', 'Price'),
             'type_name' => Yii::t('app', 'Type Name'),
+            'store_id' => Yii::t('app', 'Store Id'),
             'create_at' => Yii::t('app', 'Create At'),
         ];
     }

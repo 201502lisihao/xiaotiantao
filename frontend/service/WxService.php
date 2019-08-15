@@ -2,6 +2,7 @@
 
 namespace frontend\service;
 
+use common\models\WxGoodsModel;
 use common\models\WxOrdersModel;
 use common\models\WxStoreModel;
 use common\models\WxUserModel;
@@ -173,12 +174,16 @@ class WxService extends WxBaseService
 
     public static function getGoodsListByStoreList($storeId)
     {
-        return array();
+        $goodslist = WxGoodsModel::find()->where(['store_id' => $storeId])->asArray()->all();
+        $retList = array();
+        foreach ($goodslist as $key => $good) {
+            $retList[$good['type_name']][] = $good;
+        }
+        return $retList;
     }
 
-    //-----------------------------private 方法------------------------------------
-
-    public function getOrderListByUserId($userId){
+    public static function getOrderListByUserId($userId)
+    {
         $resArr = WxOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
         $orderList = array();
         foreach($resArr as $order){

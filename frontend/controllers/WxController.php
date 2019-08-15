@@ -139,7 +139,6 @@ class WxController extends BaseController
     /**
      * 根据user_id查用户所有订单
      * @params userId
-     * @return array
      */
     public function actionGetorderlistbyuserid($userId)
     {
