@@ -180,6 +180,7 @@ class WxService extends WxBaseService
             $retList[$good['type_name']]['name'] = $good['type_name'];
             $retList[$good['type_name']]['goods'][] = $good;
         }
+        $retList = array_values($retList);
         return $retList;
     }
 
