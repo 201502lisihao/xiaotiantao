@@ -1,9 +1,9 @@
 <?php
 namespace frontend\models;
 
+use common\models\UserModel;
 use Yii;
 use yii\base\Model;
-use common\models\UserModel;
 
 /**
  * Login form
@@ -13,10 +13,7 @@ class LoginForm extends Model
     public $username;
     public $password;
     public $rememberMe = true;
-
     private $_user;
-
-
     /**
      * @inheritdoc
      */
@@ -31,7 +28,6 @@ class LoginForm extends Model
             ['password', 'validatePassword'],
         ];
     }
-
     public function attributeLabels()
     {
         return [
@@ -40,7 +36,6 @@ class LoginForm extends Model
             'password' => '密码',
         ];
     }
-
     /**
      * Validates the password.
      * This method serves as the inline validation for password.
@@ -59,6 +54,19 @@ class LoginForm extends Model
     }
 
     /**
+     * Finds user by [[username]]
+     *
+     * @return User|null
+     */
+    protected function getUser()
+    {
+        if ($this->_user === null) {
+            $this->_user = UserModel::findByUsername($this->username);
+        }
+        return $this->_user;
+    }
+
+    /**
      * Logs in a user using the provided username and password.
      *
      * @return boolean whether the user is logged in successfully
@@ -70,19 +78,5 @@ class LoginForm extends Model
         } else {
             return false;
         }
-    }
-
-    /**
-     * Finds user by [[username]]
-     *
-     * @return User|null
-     */
-    protected function getUser()
-    {
-        if ($this->_user === null) {
-            $this->_user = UserModel::findByUsername($this->username);
-        }
-
-        return $this->_user;
     }
 }

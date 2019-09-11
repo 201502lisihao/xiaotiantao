@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use common\models\WxUserModel;
 use common\models\WxOrdersModel;
+use common\models\WxUserModel;
 use frontend\controllers\base\BaseController;
 use Yii;
 
@@ -57,7 +57,7 @@ class TestController extends BaseController
 
     /*
      * test api
-     * https://www.qianzhuli.top/wx/logtest
+     * https://www.qianzhuli.top/test/logtest
      */
     public function actionLogtest()
     {
@@ -67,7 +67,7 @@ class TestController extends BaseController
 
     /*
 	 * test api
-	 * https://www.qianzhuli.top/wx/cachetest
+	 * https://www.qianzhuli.top/test/cachetest
 	 */
     public function actionCachetest()
     {

@@ -1,20 +1,19 @@
 <?php
 namespace frontend\controllers;
 
-use Yii;
+use frontend\controllers\base\BaseController;
+use frontend\models\ContactForm;
 use frontend\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
+use frontend\models\PostsForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
-use frontend\models\ContactForm;
-use frontend\models\PostsForm;
-use common\models\PostsModel;
-use frontend\controllers\base\BaseController;
+use Yii;
 use yii\base\InvalidParamException;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
 /**
  * Site controller
@@ -79,24 +78,7 @@ class SiteController extends BaseController
      */
     public function actionIndex()
     {
-        //获取当前页
-        $curPage = Yii::$app->request->get('page',1);
-        //查询条件
-        $limit = 10;
-        $cond = ['is_valid' => PostsModel::IS_VALID, 'type' => 0];
-        $res1 = PostsForm::getList($cond,$curPage,$limit);
-        $cond = ['is_valid' => PostsModel::IS_VALID, 'type' => 1];
-        $res2 = PostsForm::getList($cond,$curPage,$limit);
-        $cond = ['is_valid' => PostsModel::IS_VALID, 'type' => 2];
-        $res3 = PostsForm::getList($cond,$curPage,$limit);
-
-        $data = [
-            'data1' => $res1['data'],
-            'data2' => $res2['data'],
-            'data3' => $res3['data'],
-        ];
-
-        return $this->render('index',['data' => $data]);
+        return $this->render('index');
     }
 
     /**
@@ -133,26 +115,6 @@ class SiteController extends BaseController
     }
 
     /**
-     * Displays contact page.
-     *
-     * @return mixed
-     */
-    public function actionContact()
-    {
-        return $this->render('contact');
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return mixed
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
-
-    /**
      * Signs user up.
      *
      * @return mixed
@@ -169,29 +131,6 @@ class SiteController extends BaseController
         }
 
         return $this->render('signup', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Requests password reset.
-     *
-     * @return mixed
-     */
-    public function actionRequestPasswordReset()
-    {
-        $model = new PasswordResetRequestForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
-
-                return $this->goHome();
-            } else {
-                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for email provided.');
-            }
-        }
-
-        return $this->render('requestPasswordResetToken', [
             'model' => $model,
         ]);
     }
