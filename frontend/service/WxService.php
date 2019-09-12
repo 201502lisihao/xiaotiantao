@@ -286,8 +286,8 @@ class WxService extends WxBaseService
             }
             $orderList[] = $order;
         }
-
-        return $orderList;
+        //返回的时候将数组倒叙
+        return array_reverse($orderList);
     }
 
     /**
