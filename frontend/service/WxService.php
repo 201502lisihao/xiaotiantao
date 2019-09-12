@@ -53,7 +53,7 @@ class WxService extends WxBaseService
         $model->get_no = self::createGetNo($storeName, $orderNo);
         $model->user_id = $params['userId'];
         $model->store_name = $storeName;
-        $model->order_detail = json_encode($params['cartList']);
+        $model->order_detail = serialize($params['cartList']);
         $model->price = $params['sumMoney'];
         $model->cut_money = $params['cutMoney'];
         $model->create_at = time();
@@ -299,7 +299,7 @@ class WxService extends WxBaseService
         $resultArr = array();
         $resultArr['get_no'] = $resObj->get_no;
         $resultArr['order_no'] = $resObj->order_no;
-        $resultArr['order_detail'] = $resObj->order_detail;
+        $resultArr['order_detail'] = unserialize($resObj->order_detail);
         $resultArr['price'] = $resObj->price;
         $resultArr['create_at'] = $resObj->create_at;
         $resultArr['order_status'] = $resObj->order_status;
