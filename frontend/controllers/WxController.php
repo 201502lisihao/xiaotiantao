@@ -161,7 +161,7 @@ class WxController extends BaseController
      */
     public function actionGetorderinfobyid($orderId)
     {
-        if (empty($storeId)) {
+        if (empty($orderId)) {
             $data = array(
                 'msg' => '传入的orderId为空'
             );
