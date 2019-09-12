@@ -53,8 +53,8 @@ class WxService extends WxBaseService
         $model->get_no = self::createGetNo($storeName, $orderNo);
         $model->user_id = $params['userId'];
         $model->store_name = $storeName;
-        $model->order_detail = $params['cartList'];
-        $model->price = $params['sumMonney'];
+        $model->order_detail = json_encode($params['cartList']);
+        $model->price = $params['sumMoney'];
         $model->cut_money = $params['cutMoney'];
         $model->create_at = time();
         //以下暂时写死
@@ -86,11 +86,13 @@ class WxService extends WxBaseService
     {
         //前缀为A的店铺
         $aArray = array(
-            '小甜桃(测试店)'
+            '小甜桃（测试店）'
         );
         if (in_array($storeName, $aArray)) {
             return 'A' . substr($orderNo, 10, 4);
         }
+        //未找到对应门店的话返回默认值
+        return 'Z' . substr($orderNo, 10, 4);
     }
 
     /**
