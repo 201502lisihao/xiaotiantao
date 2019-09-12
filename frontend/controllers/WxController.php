@@ -157,6 +157,29 @@ class WxController extends BaseController
     }
 
     /**
+     * 根据order表id来获取订单信息
+     */
+    public function actionGetorderinfobyid($orderId)
+    {
+        if (empty($storeId)) {
+            $data = array(
+                'msg' => '传入的orderId为空'
+            );
+            return $this->apiResponse($data, self::FAIL);
+        }
+        $orderInfo = WxService::getOrderInfoById($orderId);
+        $data = array(
+            'getNo' => $orderInfo['get_no'],
+            'orderNo' => $orderInfo['order_no'],
+            'cartList' => $orderInfo['order_detail'],
+            'sumMoney' => $orderInfo['price'],
+            'createAt' => date('Y-m-d H:i:s', $orderInfo['create_at']),
+            'orderStatus' => $orderInfo['order_status'],
+        );
+        return $this->apiResponse($data);
+    }
+
+    /**
      * 商品列表页
      * @param $storeId
      * @return false|string

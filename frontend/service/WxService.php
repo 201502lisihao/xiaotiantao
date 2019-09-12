@@ -253,6 +253,11 @@ class WxService extends WxBaseService
         return round($distance, 2);
     }
 
+    /**
+     * 根据门店id获取商品列表
+     * @param $storeId
+     * @return array
+     */
     public static function getGoodsListByStoreList($storeId)
     {
         $goodslist = WxGoodsModel::find()->where(['store_id' => $storeId])->asArray()->all();
@@ -265,6 +270,11 @@ class WxService extends WxBaseService
         return $retList;
     }
 
+    /**
+     * 根据user_id获取订单列表
+     * @param $userId
+     * @return array
+     */
     public static function getOrderListByUserId($userId)
     {
         $resArr = WxOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
@@ -278,5 +288,14 @@ class WxService extends WxBaseService
         }
 
         return $orderList;
+    }
+
+    /**
+     * 根据订单id获取订单信息
+     */
+    public static function getOrderInfoById($orderId)
+    {
+        $resArr = WxOrdersModel::find()->where(['id' => $orderId])->asArray()->one();
+        return $resArr;
     }
 }
