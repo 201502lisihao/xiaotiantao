@@ -199,4 +199,25 @@ class WxController extends BaseController
         }
         return $this->apiResponse($data, self::FAIL);
     }
+
+    /**
+     * 订单支付接口
+     */
+    public function actionOrderpay($orderId)
+    {
+        //去调微信支付
+        //这里假设成功,变更订单状态，通知客户端
+        $data = array();
+        if (true) {
+            $ret = WxService::orderPaySuccess($orderId);
+            if ($ret) {
+                $data = array(
+                    'msg' => '支付成功，订单状态变更成功',
+                    'orderId' => $ret
+                );
+                return $this->apiResponse($data);
+            }
+            return $this->apiResponse($data, self::FAIL);
+        }
+    }
 }

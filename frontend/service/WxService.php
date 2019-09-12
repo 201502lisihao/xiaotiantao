@@ -96,6 +96,29 @@ class WxService extends WxBaseService
     }
 
     /**
+     * 订单支付成功
+     */
+    public static function orderPaySuccess($orderId)
+    {
+        $res = WxOrdersModel::find()->where(['id' => $orderId])->one();
+        $res->order_status = '待取单';
+        if ($res->save(false)) {
+            $ret = $res->id;
+        } else {
+            $ret = 0;
+        }
+        return $ret;
+    }
+
+    /**
+     * 订单支付失败
+     */
+    public static function orderPayFail()
+    {
+        return;
+    }
+
+    /**
      * 保存或更新wx_user表
      * @param $userData
      * @return int
