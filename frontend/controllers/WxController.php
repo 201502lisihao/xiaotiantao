@@ -184,12 +184,14 @@ class WxController extends BaseController
         $jsonData = file_get_contents('php://input');
         $data = array();
         if (!empty($jsonData)) {
-            file_put_contents('/home/wwwroot/create.txt', $jsonData);
+            //写日志，追加
+            file_put_contents('/home/wwwroot/create.txt', PHP_EOL . $jsonData, FILE_APPEND | LOCK_EX);
             $params = json_decode($jsonData, true);
             $userId = $params['userId'];
             $cartlist = $params['cartList'];
+            $sumMonney = $params['sumMonney'];
             $cutMonney = $params['cutMonney'];
-            $cupNumber = $params['cupNumer'];
+            $cupNumber = $params['cupNumber'];
             return $this->apiResponse($data);
         } else {
             return $this->apiResponse($data, self::FAIL);
