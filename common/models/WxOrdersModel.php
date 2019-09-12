@@ -9,11 +9,14 @@ use Yii;
  *
  * @property int $id
  * @property string $order_no
+ * @property string $get_no
  * @property int $user_id
  * @property string $order_status
  * @property string $store_name
  * @property int $get_time
  * @property int $type
+ * @property text $order_detail
+ * @property double $cut_money
  * @property double $price
  * @property int $create_at
  */
@@ -35,9 +38,10 @@ class WxOrdersModel extends BaseModel
         return [
             [['id', 'order_no', 'create_at'], 'required'],
             [['id', 'user_id', 'get_time', 'create_at'], 'integer'],
-            [['price'], 'number'],
+            [['price', 'cut_money'], 'number'],
             [['order_no', 'order_status', 'store_name'], 'string', 'max' => 255],
             [['id'], 'unique'],
+            [['order_detail'], 'text']
         ];
     }
 
@@ -56,6 +60,7 @@ class WxOrdersModel extends BaseModel
             'type' => Yii::t('app', 'Type'),
             'price' => Yii::t('app', 'Price'),
             'create_at' => Yii::t('app', 'Create At'),
+            'order_detail' => Yii::t('app', 'Order Detail'),
         ];
     }
 }

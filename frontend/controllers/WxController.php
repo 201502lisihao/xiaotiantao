@@ -187,15 +187,16 @@ class WxController extends BaseController
             //写日志，追加
             file_put_contents('/home/wwwroot/create.txt', PHP_EOL . $jsonData, FILE_APPEND | LOCK_EX);
             $params = json_decode($jsonData, true);
-            $userId = $params['userId'];
-            $cartlist = $params['cartList'];
-            $sumMonney = $params['sumMonney'];
-            $cutMonney = $params['cutMonney'];
-            $cupNumber = $params['cupNumber'];
-            return $this->apiResponse($data);
-        } else {
-            return $this->apiResponse($data, self::FAIL);
+            //获取到参数了，写库下单，默认订单状态是未支付
+            $result = WxService::createOrder($params);
+            if ($result) {
+                $data = array(
+                    'orderId' => $result,
+                    'msg' => '生成订单成功'
+                );
+                return $this->apiResponse($data);
+            }
         }
-        //$params = json_decode($jsonData, true);
+        return $this->apiResponse($data, self::FAIL);
     }
 }

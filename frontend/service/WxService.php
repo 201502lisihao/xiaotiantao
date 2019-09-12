@@ -38,6 +38,62 @@ class WxService extends WxBaseService
     }
 
     /**
+     * 创建订单
+     */
+    public static function createOrder($params)
+    {
+        if (!count($params)) {
+            return 0;
+        }
+        $orderNo = self::createOrderNo();
+        $storeName = $params['storeName'];
+
+        $model = new WxOrdersModel();
+        $model->order_no = $orderNo;
+        $model->get_no = self::createGetNo($storeName, $orderNo);
+        $model->user_id = $params['userId'];
+        $model->store_name = $storeName;
+        $model->order_detail = $params['cartList'];
+        $model->price = $params['sumMonney'];
+        $model->cut_money = $params['cutMoney'];
+        $model->create_at = time();
+        //以下暂时写死
+        $model->order_status = '待支付';
+        $model->get_time = 0;
+        $model->type = '普通单';
+        //执行存库
+        if ($model->save(false)) {
+            $ret = $model->attributes['id'];
+        } else {
+            $ret = 0;
+        }
+        return $ret;
+    }
+
+    /**
+     * 生成订单号
+     */
+    private function createOrderNo()
+    {
+        $prefix = time();
+        return $prefix . rand(1000, 9999);
+    }
+
+    /**
+     * 根据门店生成自己的取单号前缀
+     */
+    private function createGetNo($storeName, $orderNo)
+    {
+        //前缀为A的店铺
+        $aArray = array(
+            '小甜桃(测试店)'
+        );
+        if (in_array($storeName, $aArray)) {
+            return 'A' . substr($orderNo, 10, 4);
+        }
+    }
+
+    /**
      * 保存或更新wx_user表
      * @param $userData
      * @return int
