@@ -174,4 +174,20 @@ class WxController extends BaseController
         );
         return $this->apiResponse($data);
     }
+
+    public function actionCreateOrder()
+    {
+        //获取post请求来的json，并转成数组，获取参数
+        $jsonData = file_get_contents('php://input');
+        $data = array();
+        if (!empty($jsonData)) {
+            $data = array(
+                'msg' => '成功接收post数据'
+            );
+            return $this->apiResponse($data);
+        } else {
+            return $this->apiResponse($data, self::FAIL);
+        }
+        //$params = json_decode($jsonData, true);
+    }
 }
