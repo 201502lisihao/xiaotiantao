@@ -295,7 +295,14 @@ class WxService extends WxBaseService
      */
     public static function getOrderInfoById($orderId)
     {
-        $resArr = WxOrdersModel::find()->where(['id' => $orderId])->asArray()->one();
-        return $resArr;
+        $resObj = WxOrdersModel::find()->where(['id' => $orderId])->one();
+        $resultArr = array();
+        $resultArr['get_no'] = $resObj->get_no;
+        $resultArr['order_no'] = $resObj->order_no;
+        $resultArr['order_detail'] = $resObj->order_detail;
+        $resultArr['price'] = $resObj->price;
+        $resultArr['create_at'] = $resObj->create_at;
+        $resultArr['order_status'] = $resObj->order_status;
+        return $resultArr;
     }
 }
