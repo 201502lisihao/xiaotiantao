@@ -42,9 +42,18 @@ class WxService extends WxBaseService
      */
     public static function createOrder($params)
     {
-        if (!count($params)) {
+        if (!isset($params['userId'])) {
             return 0;
         }
+        //下单锁，防止重复下单
+        $cache = Yii::$app->cache;
+        $key = $params['userId'] . '_create_order';
+        if ($cache->exists($key)) {
+            return 0;
+        } else {
+            $cache->set($key, 'lock', 1);
+        }
+
         $orderNo = self::createOrderNo();
         $storeName = $params['storeName'];
 
