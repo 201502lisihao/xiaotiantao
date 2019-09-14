@@ -173,6 +173,7 @@ class WxController extends BaseController
             'orderNo' => $orderInfo['order_no'],
             'cartList' => $orderInfo['order_detail'],
             'sumMoney' => $orderInfo['price'],
+            'orderNote' => $orderInfo['order_note'],
             'createAt' => date('Y-m-d H:i:s', $orderInfo['create_at']),
             'orderStatus' => $orderInfo['order_status'],
         );

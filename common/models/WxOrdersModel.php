@@ -16,6 +16,7 @@ use Yii;
  * @property int $get_time
  * @property int $type
  * @property text $order_detail
+ * @property text $order_note
  * @property double $cut_money
  * @property double $price
  * @property int $create_at

@@ -54,16 +54,14 @@ class WxService extends WxBaseService
             $cache->set($key, 'lock', 1);
         }
 
-        $orderNo = self::createOrderNo();
-        $storeName = $params['storeName'];
-
         $model = new WxOrdersModel();
-        $model->order_no = $orderNo;
+        $model->order_no = self::createOrderNo();
         $model->user_id = $params['userId'];
-        $model->store_name = $storeName;
+        $model->store_name = $params['storeName'];
         $model->order_detail = serialize($params['cartList']);
         $model->price = $params['sumMoney'];
         $model->cut_money = $params['cutMoney'];
+        $model->order_note = $params['orderNote'];
         $model->create_at = time();
         //以下暂时写死
         $model->order_status = '待支付';
