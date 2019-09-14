@@ -59,7 +59,6 @@ class WxService extends WxBaseService
 
         $model = new WxOrdersModel();
         $model->order_no = $orderNo;
-        $model->get_no = self::createGetNo($storeName, $orderNo);
         $model->user_id = $params['userId'];
         $model->store_name = $storeName;
         $model->order_detail = serialize($params['cartList']);
@@ -89,6 +88,24 @@ class WxService extends WxBaseService
     }
 
     /**
+     * 订单支付成功
+     */
+    public static function orderPaySuccess($orderId)
+    {
+        $res = WxOrdersModel::find()->where(['id' => $orderId])->one();
+        $orderNo = $res->order_no;
+        $storeName = $res->store_name;
+        $res->get_no = self::createGetNo($storeName, $orderNo);
+        $res->order_status = '待取单';
+        if ($res->save(false)) {
+            $ret = $res->id;
+        } else {
+            $ret = 0;
+        }
+        return $ret;
+    }
+
+    /**
      * 根据门店生成自己的取单号前缀
      */
     private function createGetNo($storeName, $orderNo)
@@ -102,21 +119,6 @@ class WxService extends WxBaseService
         }
         //未找到对应门店的话返回默认值
         return 'Z' . substr($orderNo, 10, 4);
-    }
-
-    /**
-     * 订单支付成功
-     */
-    public static function orderPaySuccess($orderId)
-    {
-        $res = WxOrdersModel::find()->where(['id' => $orderId])->one();
-        $res->order_status = '待取单';
-        if ($res->save(false)) {
-            $ret = $res->id;
-        } else {
-            $ret = 0;
-        }
-        return $ret;
     }
 
     /**
