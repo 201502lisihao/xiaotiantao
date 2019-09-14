@@ -308,6 +308,7 @@ class WxService extends WxBaseService
         $resultArr = array();
         $resultArr['get_no'] = $resObj->get_no;
         $resultArr['order_no'] = $resObj->order_no;
+        $resultArr['order_note'] = $resObj->order_note;
         $resultArr['order_detail'] = unserialize($resObj->order_detail);
         $resultArr['price'] = $resObj->price;
         $resultArr['create_at'] = $resObj->create_at;
