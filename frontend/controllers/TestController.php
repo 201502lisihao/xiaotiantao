@@ -8,7 +8,7 @@ use frontend\controllers\base\BaseController;
 use Yii;
 
 /**
- * 小甜桃服务端-微信小程序Api
+ * Test
  */
 class TestController extends BaseController
 {
@@ -30,30 +30,6 @@ class TestController extends BaseController
         return $this->apiResponse($data, self::SUCCESS);
     }
 
-    /*
-     * https://www.qianzhuli.top/test/modeltest
-     */
-    public function actionModeltest()
-    {
-        //查询
-        $res = WxUserModel::find()->where(['open_id' => '3'])->asArray()->one();
-        var_dump($res);
-        exit;
-        //保存或更新
-        $model = new WxUserModel();
-        $model->open_id = '3';
-        $model->session_key = '3';
-        $model->nickname = 'test';
-        $model->gender = 't';
-        $model->language = 'test';
-        $model->city = 'test';
-        $model->province = 'test';
-        $model->country = 'test';
-        $model->headimg = 'test';
-        $model->add_time = time();
-        $res = $model->save();
-        return $this->apiResponse($res, 1);
-    }
 
     /*
      * test api
