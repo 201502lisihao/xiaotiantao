@@ -108,11 +108,14 @@ class JustController extends BaseController
         return $this->apiResponse($data, self::FAIL);
     }
 
-    public function actionGetUseNumber()
+    /**
+     * @return 获取使用次数
+     */
+    public function actionGetusenumber()
     {
-        $userNumber = JustService::getUseNumber();
+        $useNumber = JustService::getUseNumber();
         $data = array(
-            'use_number' => $userNumber,
+            'use_number' => $useNumber,
         );
         return $this->apiResponse($data);
     }
