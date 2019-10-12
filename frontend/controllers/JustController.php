@@ -4,12 +4,12 @@ namespace frontend\controllers;
 
 use common\models\WxUserModel;
 use frontend\controllers\base\BaseController;
-use frontend\service\WxService;
+use frontend\service\JustService;
 use frontend\tools\WXBizDataCrypt;
 use Yii;
 
 /**
- * 小甜桃服务端-微信小程序Api
+ * Just清单服务端-微信小程序Api
  */
 class JustController extends BaseController
 {
@@ -69,7 +69,7 @@ class JustController extends BaseController
         }
         //缓存和数据库都未查到，去微信api获取，并存库，加缓存
         //获取session_key & open_id
-        $wxResponse = WxService::getSessionKey($code);
+        $wxResponse = JustService::getSessionKey($code);
         if (empty($wxResponse)) {
             $data = array(
                 'msg' => '微信登录api响应失败',
@@ -90,7 +90,7 @@ class JustController extends BaseController
             $userData['session_key'] = base64_encode($sessionKey);
             $userData['nickName'] = base64_encode($userData['nickName']);
             //存库,成功返回id，失败返回0
-            $res = WxService::addWxUser($userData);
+            $res = JustService::addWxUser($userData);
             if ($res) {
                 Yii::error('存库成功$userData=' . json_encode($userData));
                 $cache->set($openId, $res, 86400);
@@ -100,11 +100,20 @@ class JustController extends BaseController
                 );
                 return $this->apiResponse($data);
             } else {
-                Yii::error('WxService::addWxUser存库失败');
+                Yii::error('JustService::addWxUser存库失败');
             }
         } else {
             Yii::error('用户数据解密失败');
         }
         return $this->apiResponse($data, self::FAIL);
+    }
+
+    public function actionGetUseNumber()
+    {
+        $userNumber = JustService::getUseNumber();
+        $data = array(
+            'use_number' => $userNumber,
+        );
+        return $this->apiResponse($data);
     }
 }
