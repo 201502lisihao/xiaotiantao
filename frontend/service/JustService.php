@@ -87,12 +87,12 @@ class JustService extends WxBaseService
      */
     public static function getUseNumber()
     {
-        //累计人数表也在wx_user表中，以一条记录的形式存在
+        //累计人数表也在wx_user表中，以一条记录的形式存在 city字段记录人数
         $res = WxUserModel::find()->where(['id' => '31'])->one();
         if ($res) {
-            $useNumber = $res->gender;
+            $useNumber = $res->city;
             //调用就代表使用次数+1再存进去
-            $res->gender = ++$useNumber;
+            $res->city = ++$useNumber;
             if (!$res->save(false)) {
                 $useNumber = 0;
             }

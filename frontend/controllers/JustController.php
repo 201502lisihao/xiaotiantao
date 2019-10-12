@@ -114,6 +114,10 @@ class JustController extends BaseController
     public function actionGetusenumber()
     {
         $useNumber = JustService::getUseNumber();
+        if (!$useNumber) {
+            $data = array();
+            return $this->apiResponse($data, self::FAIL);
+        }
         $data = array(
             'use_number' => $useNumber,
         );
