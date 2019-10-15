@@ -15,7 +15,7 @@ class JustController extends BaseController
 {
 
     const FAIL = 0;
-    const AppId = 'wx8ab7f049e4f4bee3';
+    const AppId = 'wx74d768b469903a23';
     public $enableCsrfValidation = false; //禁用csrf，否则取不到post参数
 
     /**
