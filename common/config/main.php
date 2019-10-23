@@ -20,6 +20,12 @@ return [
                     'logVars' => ['_GET'],
                     'logFile' => '/home/wwwroot/default/xiaotiantao/logs/application.log.wf_'.date('Ymd'),
                 ],
+                [                                                                                                                                                                                                 
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'logVars' => ['_GET'],
+                    'logFile' => '/home/wwwroot/default/xiaotiantao/logs/application.log_'.date('Ymd'),
+                ],
             ],
         ],
     ],

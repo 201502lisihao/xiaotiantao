@@ -2,20 +2,20 @@
 
 namespace frontend\controllers;
 
-use common\models\WxUserModel;
+use common\models\YisaiWxUserModel;
 use frontend\controllers\base\BaseController;
-use frontend\service\JustService;
+use frontend\service\YisaiService;
 use frontend\tools\WXBizDataCrypt;
 use Yii;
 
 /**
- * Just清单服务端-微信小程序Api
+ * Yisai清单服务端-微信小程序Api
  */
-class JustController extends BaseController
+class YisaiController extends BaseController
 {
 
     const FAIL = 0;
-    const AppId = 'wx74d768b469903a23';
+    const AppId = 'wx4de1abc18a84ed98';
     public $enableCsrfValidation = false; //禁用csrf，否则取不到post参数
 
     /**
@@ -56,7 +56,7 @@ class JustController extends BaseController
                 return $this->apiResponse($data);
             }
             //去查wx_user表，有数据的话加缓存然后直接返回utoken
-            $res = WxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
+            $res = YisaiWxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
             if (!empty($res['id']) && $res['id'] >= 1) {
                 Yii::info('命中查库');
                 //查到后从新加缓存，减轻数据库压力
@@ -70,7 +70,7 @@ class JustController extends BaseController
         }
         //缓存和数据库都未查到，去微信api获取，并存库，加缓存
         //获取session_key & open_id
-        $wxResponse = JustService::getSessionKey($code);
+        $wxResponse = YisaiService::getSessionKey($code);
         if (empty($wxResponse)) {
             Yii::error('微信登录api响应失败');
             $data = array(
@@ -92,7 +92,7 @@ class JustController extends BaseController
             $userData['session_key'] = base64_encode($sessionKey);
             $userData['nickName'] = base64_encode($userData['nickName']);
             //存库,成功返回id，失败返回0
-            $res = JustService::addWxUser($userData);
+            $res = YisaiService::addWxUser($userData);
             if ($res) {
                 Yii::error('存库成功$userData=' . json_encode($userData));
                 $cache->set($openId, $res, 86400);
@@ -102,7 +102,7 @@ class JustController extends BaseController
                 );
                 return $this->apiResponse($data);
             } else {
-                Yii::error('JustService::addWxUser存库失败');
+                Yii::error('YisaiService::addWxUser存库失败');
             }
         } else {
             Yii::error('用户数据解密失败');
@@ -115,7 +115,7 @@ class JustController extends BaseController
      */
     public function actionGetusenumber()
     {
-        $useNumber = JustService::getUseNumber();
+        $useNumber = YisaiService::getUseNumber();
         if (!$useNumber) {
             $data = array();
             return $this->apiResponse($data, self::FAIL);

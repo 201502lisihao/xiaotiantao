@@ -28,7 +28,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => '小田新闻网管理后台',
+        'brandLabel' => 'Just管理后台',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -43,7 +43,7 @@ AppAsset::register($this);
         $menuItems = [
             ['label' => '首页', 'url' => ['/site/index']],
             ['label' => '用户管理', 'url' => ['/site/user']],
-            ['label' => '文章管理', 'url' => ['/site/news']]
+            //['label' => '文章管理', 'url' => ['/site/news']]
         ];
         $menuItems[] = [
             'label' => '退出登录 (' . Yii::$app->user->identity->username . ')',

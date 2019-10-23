@@ -6,7 +6,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use backend\models\LoginForm;
 use yii\filters\VerbFilter;
-use common\models\UserModel;
+use common\models\WxUserModel;
 use common\models\PostsModel;
 
 /**
@@ -87,14 +87,14 @@ class SiteController extends Controller
 
     //用户管理
     public function actionUser(){
-        $model = new UserModel();
+        $model = new WxUserModel();
         $result = $model->find()->asArray()->all();
         //var_dump($result);exit;
-        return $this->render('user',['data' => $result]);
+        return $this->render('user',['data' => array_reverse($result)]);
     }
     //删除用户
     public function actionDeluser($id){
-        $model = new UserModel();
+        $model = new WxUserModel();
         $query = $model->find()->where(['id' => $id])->one();
         if (!empty($query)) {
             $query->delete();

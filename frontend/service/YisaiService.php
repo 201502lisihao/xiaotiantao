@@ -2,19 +2,19 @@
 
 namespace frontend\service;
 
-use common\models\WxUserModel;
+use common\models\YisaiWxUserModel;
 use frontend\service\base\WxBaseService;
 use Yii;
 
 /*
- * 微信小程序service层
+ * 伊赛微信小程序service层
  */
 
-class JustService extends WxBaseService
+class YisaiService extends WxBaseService
 {
     const WxGetOpenIdUrl = 'https://api.weixin.qq.com/sns/jscode2session';//微信获取openId和session_key的url
-    const AppId = 'wx74d768b469903a23';
-    const AppSecret = 'abf836a0dea96975ef43dcc423070fdc';
+    const AppId = 'wx4de1abc18a84ed98';
+    const AppSecret = '905507cd45656bb15e73fd3638a0a345';
     const GrantType = 'authorization_code';
 
     /**
@@ -45,7 +45,7 @@ class JustService extends WxBaseService
         if (empty($userData['openId'])) {
             return 0;
         }
-        $res = WxUserModel::find()->where(['open_id' => $userData['openId']])->one();
+        $res = YisaiWxUserModel::find()->where(['open_id' => $userData['openId']])->one();
         if ($res) {
             //先查库，有的话则更新并返回id
             $res->nickname = $userData['nickName'];
@@ -61,7 +61,7 @@ class JustService extends WxBaseService
             }
         } else {
             //否者插入，并返回id
-            $model = new WxUserModel();
+            $model = new YisaiWxUserModel();
             $model->open_id = $userData['openId'];
             $model->session_key = $userData['session_key'];
             $model->nickname = $userData['nickName'];
@@ -88,7 +88,7 @@ class JustService extends WxBaseService
     public static function getUseNumber()
     {
         //累计人数表也在wx_user表中，以一条记录的形式存在 city字段记录人数
-        $res = WxUserModel::find()->where(['id' => '31'])->one();
+        $res = YisaiWxUserModel::find()->where(['id' => '31'])->one();
         if ($res) {
             $useNumber = $res->city;
             //调用就代表使用次数+1再存进去
