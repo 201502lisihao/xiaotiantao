@@ -125,4 +125,47 @@ class YisaiController extends BaseController
         );
         return $this->apiResponse($data);
     }
+
+    /**
+     * 下单接口
+     */
+    public function actionCreateorder()
+    {
+        //获取post请求来的json，并转成数组，获取参数
+        $jsonData = file_get_contents('php://input');
+        $data = array();
+        if (!empty($jsonData)) {
+            $params = json_decode($jsonData, true);
+            //获取到参数了，写库下单，默认订单状态是未支付
+            $result = YisaiService::createOrder($params);
+            if ($result) {
+                $data = array(
+                    'orderId' => $result,
+                    'msg' => '积分获取成功'
+                );
+                return $this->apiResponse($data);
+            }
+        }
+        return $this->apiResponse($data, self::FAIL);
+    }
+
+    /**
+     * 根据user_id查用户所有订单
+     * @params userId
+     */
+    public function actionGetorderlistbyuserid($userId)
+    {
+        if (empty($userId)) {
+            $data = array(
+                'msg' => '传入的userId为空'
+            );
+            return $this->apiResponse($data, self::FAIL);
+        }
+        //userId对应wx_user表中id字段
+        $orderList = YisaiService::getOrderListByUserId($userId);
+        $data = array(
+            'order_list' => $orderList,
+        );
+        return $this->apiResponse($data);
+    }
 }

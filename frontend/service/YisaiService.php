@@ -2,6 +2,7 @@
 
 namespace frontend\service;
 
+use common\models\YisaiOrdersModel;
 use common\models\YisaiWxUserModel;
 use frontend\service\base\WxBaseService;
 use Yii;
@@ -100,5 +101,67 @@ class YisaiService extends WxBaseService
             $useNumber = 0;
         }
         return $useNumber;
+    }
+
+    /**
+     * 下单（转发得积分）
+     */
+    public static function createOrder($params)
+    {
+        if (!isset($params['userId'])) {
+            return 0;
+        }
+        //下单锁，防止重复下单
+        $cache = Yii::$app->cache;
+        $key = $params['userId'] . '_create_order';
+        if ($cache->exists($key)) {
+            return 0;
+        } else {
+            $cache->set($key, 'lock', 1);
+        }
+
+        $model = new YisaiOrdersModel();
+        $model->order_no = self::createOrderNo();
+        $model->user_id = $params['userId'];
+        $model->apply_from = $params['applyFrom'];
+        $model->award_point = $params['awardPoint'];
+        $model->order_detail = serialize($params['orderDetail']);
+        $model->create_at = time();
+        //以下暂时写死
+        $model->order_status = '待核销';
+        //执行存库
+        if ($model->save(false)) {
+            $ret = $model->attributes['id'];
+        } else {
+            $ret = 0;
+        }
+        return $ret;
+    }
+
+    /**
+     * 生成订单号
+     */
+    private function createOrderNo()
+    {
+        $prefix = time();
+        return $prefix . rand(1000, 9999);
+    }
+
+    /**
+     * 根据user_id获取订单列表
+     * @param $userId
+     * @return array
+     */
+    public static function getOrderListByUserId($userId)
+    {
+        $resArr = YisaiOrdersModel::find()->where(['user_id' => $userId])->asArray()->all();
+        $orderList = array();
+        //转换时间格式
+        foreach ($resArr as $order) {
+            $order['create_at'] = date('Y-m-d H:i', $order['create_at']);
+            $orderList[] = $order;
+        }
+        //返回的时候将数组倒叙
+        return array_reverse($orderList);
     }
 }
