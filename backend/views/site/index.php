@@ -9,7 +9,7 @@ $this->title = '管理后台-小田新闻网';
     <div class="jumbotron">
         <h1>Just清单管理后台</h1>
 
-        <p class="lead">http://www.qianzhuli,top</p>
+        <p class="lead">http://www.qianzhuli.top</p>
 
         <span><a class="btn btn-lg btn-success" href="<?=Url::to(['site/user'])?>">用&nbsp;户&nbsp;管&nbsp;理</a></span>
         <!--

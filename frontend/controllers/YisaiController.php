@@ -168,4 +168,20 @@ class YisaiController extends BaseController
         );
         return $this->apiResponse($data);
     }
+
+    /**
+     * 店员操作核销订单
+     */
+    public function actionOrderexchange($orderId){
+        $data = array();
+        $ret = YisaiService::orderExchange($orderId);
+        if($ret){
+            $data = array(
+                'msg' => '积分核销成功',
+                'orderId' => $ret
+            );
+            return $this->apiResponse($data);
+        }
+        return $this->apiResponse($data, self::FAIL);
+    }
 }

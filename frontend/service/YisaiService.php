@@ -164,4 +164,21 @@ class YisaiService extends WxBaseService
         //返回的时候将数组倒叙
         return array_reverse($orderList);
     }
+
+    /**
+     * 更改积分订单状态为已核销
+     */
+    public function orderExchange($orderId){
+        $res = YisaiOrdersModel::find()->where(['id' => $orderId])->one();
+        if(!$res){
+            return 0;
+        }
+        $res->order_status = '已核销';
+        if($res->save(false)){
+            $ret = $res->id;
+        } else {
+            $ret = 0;
+        }
+        return $ret;
+    }
 }
