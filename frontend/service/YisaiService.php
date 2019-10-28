@@ -168,17 +168,39 @@ class YisaiService extends WxBaseService
     /**
      * 更改积分订单状态为已核销
      */
-    public function orderExchange($orderId){
+    public static function orderExchange($orderId)
+    {
         $res = YisaiOrdersModel::find()->where(['id' => $orderId])->one();
-        if(!$res){
+        if (!$res) {
             return 0;
         }
         $res->order_status = '已核销';
-        if($res->save(false)){
+        if ($res->save(false)) {
             $ret = $res->id;
         } else {
             $ret = 0;
         }
         return $ret;
     }
+
+    /**
+     * 批量核销积分
+     */
+    public static function batchCunsume($userId, $point)
+    {
+        $ret = false;
+        $ordersObj = YisaiOrdersModel::find()->where(['user_id' => $userId, 'order_status' => '待核销'])->all();
+        if (count($ordersObj) >= $point) {
+            for ($i = 0; $i < $point; $i++) {
+                $ordersObj[$i]->order_status = '已核销';
+                $ordersObj[$i]->save(false);
+            }
+            $ret = true;
+            return $ret;
+        } else {
+            return $ret;
+        }
+
+    }
 }
+

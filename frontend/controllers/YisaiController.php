@@ -184,4 +184,22 @@ class YisaiController extends BaseController
         }
         return $this->apiResponse($data, self::FAIL);
     }
+
+    /**
+     * 批量核销积分
+     * @$point，核销积分数量 最小单位10 传5就是消50积分
+     */
+    public function actionBatchconsume($userId, $point)
+    {
+        $data = array();
+        //批量核销结果
+        $ret = YisaiService::batchCunsume($userId, $point);
+        if ($ret) {
+            $data = array(
+                'msg' => '批量核销成功',
+            );
+            return $this->apiResponse($data);
+        }
+        return $this->apiResponse($data, self::FAIL);
+    }
 }
