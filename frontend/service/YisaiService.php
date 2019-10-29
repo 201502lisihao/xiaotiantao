@@ -104,20 +104,28 @@ class YisaiService extends WxBaseService
     }
 
     /**
-     * 下单（转发得积分）
+     * 下单（转发、生成海报得积分）
      */
     public static function createOrder($params)
     {
         if (!isset($params['userId'])) {
             return 0;
         }
-        //下单锁，防止重复下单
+        //下单锁，每人每天1次获取积分机会
+        $DailyLimit = 1;
+        //当天剩余秒数
+        $restOfTime = strtotime('+1days', strtotime(date('Y-m-d'))) - time();
         $cache = Yii::$app->cache;
         $key = $params['userId'] . '_create_order';
         if ($cache->exists($key)) {
-            return 0;
+            $value = $cache->get($key);
+            if ($value < $DailyLimit) {
+                $cache->set($key, ++$value, $restOfTime);
+            } else {
+                return 0;
+            }
         } else {
-            $cache->set($key, 'lock', 1);
+            $cache->set($key, 1, $restOfTime);
         }
 
         $model = new YisaiOrdersModel();
