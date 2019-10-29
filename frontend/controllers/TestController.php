@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\WxOrdersModel;
 use common\models\WxUserModel;
+use common\models\YisaiOrdersModel;
 use frontend\controllers\base\BaseController;
 use Yii;
 
@@ -37,8 +38,15 @@ class TestController extends BaseController
      */
     public function actionLogtest()
     {
-        //code
-        Yii::error('111111111111111111');
+        //Yii::error('111111111111111111');
+        //$userId = 82;
+        //$point = 3;
+        //$ordersObj = YisaiOrdersModel::find()->where(['user_id' => $userId, 'order_status' => '待核销'])->all();
+        //$count = count($ordersObj);
+        //$ordersObj[0]->apply_from = '111111';
+        //$ordersObj[0]->save(false);
+        //var_dump($ordersObj[0]->apply_from);
+        //var_dump($count);
     }
 
     /*

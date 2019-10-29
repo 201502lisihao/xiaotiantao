@@ -188,17 +188,15 @@ class YisaiService extends WxBaseService
      */
     public static function batchCunsume($userId, $point)
     {
-        $ret = false;
         $ordersObj = YisaiOrdersModel::find()->where(['user_id' => $userId, 'order_status' => '待核销'])->all();
         if (count($ordersObj) >= $point) {
             for ($i = 0; $i < $point; $i++) {
                 $ordersObj[$i]->order_status = '已核销';
                 $ordersObj[$i]->save(false);
             }
-            $ret = true;
-            return $ret;
+            return true;
         } else {
-            return $ret;
+            return false;
         }
 
     }
