@@ -4,11 +4,11 @@
 /* @var $content string */
 
 use backend\assets\AppAsset;
-use yii\helpers\Html;
+use common\widgets\Alert;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
-use common\widgets\Alert;
 
 AppAsset::register($this);
 ?>
@@ -28,7 +28,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Just管理后台',
+        'brandLabel' => 'lisihao管理后台',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -42,7 +42,8 @@ AppAsset::register($this);
     } else {
         $menuItems = [
             ['label' => '首页', 'url' => ['/site/index']],
-            ['label' => '用户管理', 'url' => ['/site/user']],
+            ['label' => 'Just清单', 'url' => ['/site/just']],
+            ['label' => '伊赛Tool', 'url' => ['/site/yisai']],
             //['label' => '文章管理', 'url' => ['/site/news']]
         ];
         $menuItems[] = [
