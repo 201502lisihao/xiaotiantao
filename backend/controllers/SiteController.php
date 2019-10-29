@@ -1,13 +1,14 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\LoginForm;
+use common\models\PostsModel;
+use common\models\WxUserModel;
+use common\models\YisaiWxUserModel;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
-use backend\models\LoginForm;
 use yii\filters\VerbFilter;
-use common\models\WxUserModel;
-use common\models\PostsModel;
+use yii\web\Controller;
 
 /**
  * Site controller
@@ -77,6 +78,7 @@ class SiteController extends Controller
             ]);
         }
     }
+
     //退出登录
     public function actionLogout()
     {
@@ -85,13 +87,24 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    //用户管理
-    public function actionUser(){
+    //Just清单用户管理
+    public function actionJust()
+    {
         $model = new WxUserModel();
         $result = $model->find()->asArray()->all();
         //var_dump($result);exit;
         return $this->render('user',['data' => array_reverse($result)]);
     }
+
+    //伊赛Tool用户管理
+    public function actionYisai()
+    {
+        $model = new YisaiWxUserModel();
+        $result = $model->find()->asArray()->all();
+        //var_dump($result);exit;
+        return $this->render('user', ['data' => array_reverse($result)]);
+    }
+
     //删除用户
     public function actionDeluser($id){
         $model = new WxUserModel();
@@ -101,14 +114,9 @@ class SiteController extends Controller
         }
         return $this->actionUser();
     }
+
     //新闻管理
-    public function actionNews(){
-        $model = new PostsModel();
-        $result = $model->find()->select(['id','title','summary','label_img','is_valid','user_name'])->asArray()->all();
-        //var_dump($result);exit;
-        return $this->render('news',['data' => $result]);
-    }
-    //删除新闻 增删改---删除
+
     public function actionDelnews($id){
         $model = new PostsModel();
         $query = $model->find()->where(['id' => $id])->one();
@@ -117,7 +125,19 @@ class SiteController extends Controller
         }
         return $this->actionNews();
     }
+
+    //删除新闻 增删改---删除
+
+    public function actionNews()
+    {
+        $model = new PostsModel();
+        $result = $model->find()->select(['id', 'title', 'summary', 'label_img', 'is_valid', 'user_name'])->asArray()->all();
+        //var_dump($result);exit;
+        return $this->render('news', ['data' => $result]);
+    }
+
     //审核新闻
+
     public function actionChecknews($id){
         $model = new PostsModel();
         $query = $model->find()->where(['id' => $id])->one();
@@ -126,6 +146,7 @@ class SiteController extends Controller
         $query->save();
         return $this->actionNews();
     }
+
     //查看新闻
     public function actionLooknews($id){
         $model = new PostsModel();
