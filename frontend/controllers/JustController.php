@@ -36,7 +36,7 @@ class JustController extends BaseController
         $iv = $params['iv'];
         $data = array();
         if (empty($code) || empty($encryptedData) || empty($iv)) {
-            Yii::error('小程序端传参异常');
+            Yii::error('【用户登录】小程序端传参异常');
             $data = array(
                 'msg' => '参数异常,请确认请求参数后重新发起请求',
             );
@@ -107,6 +107,38 @@ class JustController extends BaseController
         } else {
             Yii::error('用户数据解密失败');
         }
+        return $this->apiResponse($data, self::FAIL);
+    }
+
+    /**
+     * 保存用户提交的建议
+     */
+    public function actionSavesuggest()
+    {
+        //获取post请求来的json，并转成数组，获取参数
+        $jsonData = file_get_contents('php://input');
+        $params = json_decode($jsonData, true);
+        $utoken = $params['utoken'];
+        $suggest = $params['suggest'];
+        $contact = $params['contact'] ?? '未填写';
+
+        if (empty($utoken) || empty($suggest)) {
+            Yii::error('【保存建议】小程序端传参异常');
+            $data = array(
+                'msg' => '参数异常,请确认请求参数后重新发起请求',
+            );
+            return $this->apiResponse($data, self::FAIL);
+        }
+
+        $res = JustService::saveSuggest($utoken, $suggest, $contact);
+        if ($res) {
+            $data = array(
+                'msg' => '建议保存成功'
+            );
+        }
+        $data = array(
+            'msg' => '建议保存失败',
+        );
         return $this->apiResponse($data, self::FAIL);
     }
 

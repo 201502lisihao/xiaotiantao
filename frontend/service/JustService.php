@@ -2,7 +2,8 @@
 
 namespace frontend\service;
 
-use common\models\WxUserModel;
+use common\models\JustSuggestModel;
+use common\models\JustUserModel;
 use frontend\service\base\WxBaseService;
 use Yii;
 
@@ -35,7 +36,7 @@ class JustService extends WxBaseService
     }
 
     /**
-     * 保存或更新wx_user表
+     * 保存或更新just_wx_user表
      * @param $userData
      * @return int
      */
@@ -45,7 +46,7 @@ class JustService extends WxBaseService
         if (empty($userData['openId'])) {
             return 0;
         }
-        $res = WxUserModel::find()->where(['open_id' => $userData['openId']])->one();
+        $res = JustUserModel::find()->where(['open_id' => $userData['openId']])->one();
         if ($res) {
             //先查库，有的话则更新并返回id
             $res->nickname = $userData['nickName'];
@@ -61,7 +62,7 @@ class JustService extends WxBaseService
             }
         } else {
             //否者插入，并返回id
-            $model = new WxUserModel();
+            $model = new JustUserModel();
             $model->open_id = $userData['openId'];
             $model->session_key = $userData['session_key'];
             $model->nickname = $userData['nickName'];
@@ -88,7 +89,7 @@ class JustService extends WxBaseService
     public static function getUseNumber()
     {
         //累计人数表也在wx_user表中，以一条记录的形式存在 city字段记录人数
-        $res = WxUserModel::find()->where(['id' => '31'])->one();
+        $res = JustUserModel::find()->where(['id' => '31'])->one();
         if ($res) {
             $useNumber = $res->city;
             //调用就代表使用次数+1再存进去
@@ -100,5 +101,23 @@ class JustService extends WxBaseService
             $useNumber = 0;
         }
         return $useNumber;
+    }
+
+    /**
+     * 保存用户建议
+     */
+    public static function saveSuggest($utoken, $suggest, $contact)
+    {
+        $model = new JustSuggestModel();
+        $model->open_id = $utoken;
+        $model->suggest = $suggest;
+        $model->contact = $contact;
+        $model->add_time = time();
+        if ($model->save(false)) {
+            $ret = $model->attributes['id'];
+        } else {
+            $ret = 0;
+        }
+        return $ret;
     }
 }
