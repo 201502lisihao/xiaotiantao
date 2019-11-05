@@ -15,6 +15,6 @@ $this->title = '管理后台-小田新闻网';
 
         <span><a class="btn btn-lg btn-success" href="<?= Url::to(['site/just']) ?>">Just 清 单</a></span>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span><a class="btn btn-lg btn-success" href="<?= Url::to(['site/yisai']) ?>">伊 赛 Tool</a></span>
+        <span><a class="btn btn-lg btn-success" href="<?= Url::to(['site/suggest']) ?>">群 众 反 馈</a></span>
     </div>
 </div>

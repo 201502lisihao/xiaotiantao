@@ -43,7 +43,7 @@ AppAsset::register($this);
         $menuItems = [
             ['label' => '首页', 'url' => ['/site/index']],
             ['label' => 'Just清单', 'url' => ['/site/just']],
-            ['label' => '伊赛Tool', 'url' => ['/site/yisai']],
+            ['label' => '群众反馈', 'url' => ['/site/suggest']],
             //['label' => '文章管理', 'url' => ['/site/news']]
         ];
         $menuItems[] = [
