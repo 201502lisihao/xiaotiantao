@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\models\WxUserModel;
+use common\models\JustUserModel;
 use frontend\controllers\base\BaseController;
 use frontend\service\JustService;
 use frontend\tools\WXBizDataCrypt;
@@ -48,7 +48,7 @@ class JustController extends BaseController
         if (!empty($utoken)) {
             //判断缓存是否过期，未过期直接返回utoken
             if ($cache->exists($utoken)) {
-                Yii::info('命中缓存 utoken=' . $utoken);
+                Yii::error('命中缓存 utoken=' . $utoken);
                 $data = array(
                     'utoken' => $utoken,
                     'user_id' => $cache->get($utoken)
@@ -56,9 +56,9 @@ class JustController extends BaseController
                 return $this->apiResponse($data);
             }
             //去查wx_user表，有数据的话加缓存然后直接返回utoken
-            $res = WxUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
+            $res = JustUserModel::find()->where(['open_id' => $utoken])->asArray()->one();
             if (!empty($res['id']) && $res['id'] >= 1) {
-                Yii::info('命中查库');
+                Yii::error('命中查库');
                 //查到后从新加缓存，减轻数据库压力
                 $cache->set($res['open_id'], $res['id'], 86400);
                 $data = array(
@@ -82,8 +82,12 @@ class JustController extends BaseController
         $openId = $wxResponse['openid'];
 
         //解密用户数据，保存在userData中
+        //$userData = '';
         $wxCrypt = new WXBizDataCrypt(self::AppId, $sessionKey);
+        Yii::error('11111111'.json_encode($encryptedData));
+        Yii::error('11111111'.json_encode($iv));
         $decryptCode = $wxCrypt->decryptData($encryptedData, $iv, $userData);
+        Yii::error('11111111'.json_encode($userData));
 
         //直接拿openId当用户的utoken
         if ($decryptCode == 0) {
@@ -105,7 +109,7 @@ class JustController extends BaseController
                 Yii::error('JustService::addWxUser存库失败');
             }
         } else {
-            Yii::error('用户数据解密失败');
+            Yii::error('用户数据解密失败,$decryptCode='.$decryptCode);
         }
         return $this->apiResponse($data, self::FAIL);
     }

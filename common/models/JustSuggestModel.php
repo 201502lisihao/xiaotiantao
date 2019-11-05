@@ -21,10 +21,7 @@ class JustSuggestModel extends BaseModel
     public function rules()
     {
         return [
-            [['open_id', 'suggest', 'add_time'], 'required'],
             [['add_time'], 'integer'],
-            [['open_id'], 'string', 'max' => 255],
-            [['open_id'], 'unique'],
         ];
     }
 

@@ -4,6 +4,7 @@ namespace backend\controllers;
 use backend\models\LoginForm;
 use common\models\PostsModel;
 use common\models\WxUserModel;
+use common\models\JustUserModel;
 use common\models\YisaiWxUserModel;
 use Yii;
 use yii\filters\AccessControl;
@@ -29,7 +30,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'user', 'just', 'yisai', 'news', 'deluser', 'delnews', 'checknews', 'looknews'],
+                        'actions' => ['logout', 'index', 'user', 'just', 'deljustuser', 'yisai', 'news', 'deluser', 'delnews', 'checknews', 'looknews'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -90,10 +91,10 @@ class SiteController extends Controller
     //Just清单用户管理
     public function actionJust()
     {
-        $model = new WxUserModel();
+        $model = new JustUserModel();
         $result = $model->find()->asArray()->all();
         //var_dump($result);exit;
-        return $this->render('user',['data' => array_reverse($result)]);
+        return $this->render('just',['data' => array_reverse($result)]);
     }
 
     //伊赛Tool用户管理
@@ -113,6 +114,16 @@ class SiteController extends Controller
             $query->delete();
         }
         return $this->actionUser();
+    }
+
+    //删除用户
+    public function actionDeljustuser($id){
+        $model = new JustUserModel();
+        $query = $model->find()->where(['id' => $id])->one();
+        if (!empty($query)) {
+            $query->delete();
+        }
+        return $this->actionJust();
     }
 
     //新闻管理
