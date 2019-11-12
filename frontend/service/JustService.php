@@ -108,6 +108,15 @@ class JustService extends WxBaseService
      */
     public static function saveSuggest($utoken, $suggest, $contact)
     {
+        //加锁，防止重复提交
+        $cache = Yii::$app->cache;
+        $key = $utoken . '_suggest';
+        if($cache->exists($key)){
+            return 0;
+        }else{
+            $cache->set($key, 'locked', 1);
+        }
+
         $model = new JustSuggestModel();
         $model->open_id = $utoken;
         $model->suggest = $suggest;

@@ -28,7 +28,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'just', 'deljustuser', 'suggest', 'dealsuggest'],
+                        'actions' => ['logout', 'index', 'just', 'deljustuser', 'suggest', 'dealsuggest', 'deletesuggest'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -107,6 +107,9 @@ class SiteController extends Controller
         foreach ($result as $key => $value){
             $data[$key] = $value;
             $openId = $value['open_id'];
+            if(empty($data[$key]['contact'])){
+                $data[$key]['contact'] = '暂无';
+            }
             $userInfo = $userModel->find()->where(['open_id' => $openId])->one();
             if (!empty($userInfo)){
                 $data[$key]['headimg'] = $userInfo['headimg'];
@@ -120,7 +123,9 @@ class SiteController extends Controller
         return $this->render('suggest',['data' => array_reverse($data)]);
     }
 
-    //删除用户
+    /**
+     * 删除用户
+     */
     public function actionDeljustuser($id){
         $model = new JustUserModel();
         $query = $model->find()->where(['id' => $id])->one();
@@ -128,6 +133,18 @@ class SiteController extends Controller
             $query->delete();
         }
         return $this->actionJust();
+    }
+
+    /**
+     * 删除意见
+     */
+    public function actionDeletesuggest($id){
+        $model = new JustSuggestModel();
+        $query = $model->find()->where(['id' => $id])->one();
+        if(!empty($query)){
+            $query->delete();
+        }
+        return $this->actionSuggest();
     }
 
 //    //新闻管理
