@@ -165,7 +165,7 @@ class JustController extends BaseController
     /**
      * 小程序通知用户生成海报完成，奖励抽奖券接口
      */
-    public function actionCreateTicket()
+    public function actionCreateticket()
     {
         //获取post请求来的json，并转成数组，获取参数
         $jsonData = file_get_contents('php://input');
