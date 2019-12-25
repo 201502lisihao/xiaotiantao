@@ -3,6 +3,7 @@
 namespace frontend\service;
 
 use common\models\JustSuggestModel;
+use common\models\JustTicketModel;
 use common\models\JustUserModel;
 use frontend\service\base\WxBaseService;
 use Yii;
@@ -128,5 +129,55 @@ class JustService extends WxBaseService
             $ret = 0;
         }
         return $ret;
+    }
+
+    /**
+     * 小程序通知用户生成海报完成，奖励抽奖券
+     */
+    public static function createTicket($params)
+    {
+        if (!isset($params['userId'])) {
+            return 0;
+        }
+        //下单锁，每人1次奖券海报获取机会
+        //一个月有效期
+        $restOfTime = 2592000;
+        $cache = Yii::$app->cache;
+        $key = $params['userId'] . '_get_ticket_by_post';
+        if ($cache->get($key)) {
+            return 0;
+        } else {
+            $cache->set($key, 1, $restOfTime);
+        }
+
+        //取当前奖券发到多少号了,自增
+        $ticketCacheId = $cache->incr('ticket_cache_id');
+
+        $model = new JustTicketModel();
+        $model->ticket_code = self::createTicketCode($ticketCacheId);
+        $model->user_id = $params['userId'];
+        $model->channel = $params['channel'];
+        $model->create_at = time();
+        //以下暂时写死
+        $model->status = 1; //1有效、2无效
+
+        //执行存库
+        if ($model->save(false)) {
+            $ret = $model->attributes['id'];
+        } else {
+            $ret = 0;
+        }
+        return $ret;
+    }
+
+    /**
+     * 生成奖券号码
+     */
+    private function createTicketCode($ticketCacheId)
+    {
+        $strs="QWERTYUIOPASDFGHJKLZXCVBNM";
+        $salt=substr(str_shuffle($strs),mt_rand(0,strlen($strs)-3), 2);
+        $code = sprintf("%08d", 2);
+        return $salt . $code;
     }
 }

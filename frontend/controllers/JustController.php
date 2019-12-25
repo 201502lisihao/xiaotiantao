@@ -161,4 +161,27 @@ class JustController extends BaseController
         );
         return $this->apiResponse($data);
     }
+
+    /**
+     * 小程序通知用户生成海报完成，奖励抽奖券接口
+     */
+    public function actionCreateTicket()
+    {
+        //获取post请求来的json，并转成数组，获取参数
+        $jsonData = file_get_contents('php://input');
+        $data = array();
+        if (!empty($jsonData)) {
+            $params = json_decode($jsonData, true);
+            //获取到参数了，写库下单，默认订单状态是未支付
+            $result = JustService::createTicket($params);
+            if ($result) {
+                $data = array(
+                    'orderId' => $result,
+                    'msg' => '奖券获取成功'
+                );
+                return $this->apiResponse($data);
+            }
+        }
+        return $this->apiResponse($data, self::FAIL);
+    }
 }
