@@ -201,12 +201,14 @@ class JustController extends BaseController
         $raffleTicketList = JustService::getRaffleticketListByUserId($userId);
         if (count($raffleTicketList)){
             $data = array(
-                'order_list' => $raffleTicketList,
+                'msg' => '获取奖券成功',
+                'raffle_ticket_list' => $raffleTicketList,
             );
             return $this->apiResponse($data);
         }
         $data = array(
             'msg' => '无奖券',
+            'raffle_ticket_list' => false
         );
         return $this->apiResponse($data, self::FAIL);
     }
