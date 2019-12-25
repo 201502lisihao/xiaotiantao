@@ -187,4 +187,16 @@ class JustService extends WxBaseService
         $code = sprintf("%08d", 2);
         return $salt . $code;
     }
+
+    /**
+     * 根据user_id获取订单列表
+     * @param $userId
+     * @return array
+     */
+    public static function getRaffleticketListByUserId($userId)
+    {
+        $resArr = JustTicketModel::find()->where(['user_id' => $userId])->asArray()->all();
+        //返回的时候将数组倒叙
+        return array_reverse($resArr);
+    }
 }

@@ -184,4 +184,30 @@ class JustController extends BaseController
         }
         return $this->apiResponse($data, self::FAIL);
     }
+
+    /**
+     * 根据user_id查用户所有订单
+     * @params userId
+     */
+    public function actionGetraffleticketlistbyuserid($userId)
+    {
+        if (empty($userId)) {
+            $data = array(
+                'msg' => '传入的userId为空'
+            );
+            return $this->apiResponse($data, self::FAIL);
+        }
+        //userId对应wx_user表中id字段
+        $raffleTicketList = JustService::getRaffleticketListByUserId($userId);
+        if (count($raffleTicketList)){
+            $data = array(
+                'order_list' => $raffleTicketList,
+            );
+            return $this->apiResponse($data);
+        }
+        $data = array(
+            'msg' => '无奖券',
+        );
+        return $this->apiResponse($data, self::FAIL);
+    }
 }
