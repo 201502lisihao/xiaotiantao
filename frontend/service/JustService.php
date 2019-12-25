@@ -166,7 +166,7 @@ class JustService extends WxBaseService
         $model->channel = $params['channel'];
         $model->create_at = time();
         //以下暂时写死
-        $model->status = 1; //1有效、2无效
+        $model->ticket_status = 1; //1有效、2无效
 
         //执行存库
         if ($model->save(false)) {
