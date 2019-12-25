@@ -151,10 +151,17 @@ class JustService extends WxBaseService
         }
 
         //取当前奖券发到多少号了,自增
-        $ticketCacheId = $cache->incr('ticket_cache_id');
+        if($cache->get('ticket_cache_id')){
+            $ticketCacheId = $cache->get('ticket_cache_id');
+        } else {
+            $ticketCacheId = 0;
+        }
+        $currentTicketCacheId = $ticketCacheId + 1;
+        $cache->set('ticket_cache_id', $currentTicketCacheId, $restOfTime);
+
 
         $model = new JustTicketModel();
-        $model->ticket_code = self::createTicketCode($ticketCacheId);
+        $model->ticket_code = self::createTicketCode($currentTicketCacheId);
         $model->user_id = $params['userId'];
         $model->channel = $params['channel'];
         $model->create_at = time();
