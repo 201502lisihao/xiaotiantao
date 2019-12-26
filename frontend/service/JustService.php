@@ -183,7 +183,7 @@ class JustService extends WxBaseService
     {
         $strs="QWERTYUIOPASDFGHJKLZXCVBNM";
         $salt=substr(str_shuffle($strs),mt_rand(0,strlen($strs)-3), 2);
-        $code = sprintf("%08d", 2);
+        $code = sprintf("%08d", $ticketCacheId);
         return $salt . $code;
     }
 
