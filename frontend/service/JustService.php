@@ -146,8 +146,6 @@ class JustService extends WxBaseService
         $key = $params['userId'] . '_get_ticket_by_post';
         if ($cache->get($key)) {
             return 0;
-        } else {
-            $cache->set($key, 1, $restOfTime);
         }
 
         //取当前奖券发到多少号了,自增
@@ -171,6 +169,7 @@ class JustService extends WxBaseService
         //执行存库
         if ($model->save(false)) {
             $ret = $model->attributes['id'];
+            $cache->set($key, 1, $restOfTime);
         } else {
             $ret = 0;
         }
