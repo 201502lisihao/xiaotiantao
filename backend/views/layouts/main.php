@@ -70,7 +70,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left"><a href="http://www.beian.miit.gov.cn">冀ICP备19000109号</a></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
