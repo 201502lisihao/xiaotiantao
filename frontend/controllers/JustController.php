@@ -225,4 +225,24 @@ class JustController extends BaseController
         }
         return $this->apiResponse($data);
     }
+
+    //小程序调用获取带参数二维码的接口（新年活动用）
+    public function actionGetaqrcodepath(){
+        //获取post请求来的json，并转成数组，获取参数
+        $jsonData = file_get_contents('php://input');
+        $params = json_decode($jsonData, true);
+        $scene = $params['scene'] ?? '';
+        $page = $params['pagg'] ?? '';
+        $data = array();
+        if (empty($scene) && empty($page)){
+            $data['msg'] = '传参异常';
+            return $this->apiResponse($data, self::FAIL);
+        }
+        $res = JustService::getAqrCodePath($scene, $page);
+        if (!$res){
+            $data['msg'] = '未成功获取到小程序码，请确认参数正确后重试';
+            return $this->apiResponse($data, self::FAIL);
+        }
+        return $this->apiResponse($data);
+    }
 }

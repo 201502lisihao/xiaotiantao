@@ -198,4 +198,22 @@ class JustService extends WxBaseService
         //返回的时候将数组倒叙
         return array_reverse($resArr);
     }
+
+    /**
+     * @param $params
+     * 调用微信生成带参数二维码接口
+     */
+    public static function getAqrCodePath($scene, $page, $accessToken){
+        $client = new \GuzzleHttp\Client();
+        $resObject = $client->request("POST", "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=".$accessToken, [
+            'data' => [
+                'scene' => $scene,
+                'page' => $page
+            ]
+        ]);
+
+        $resJson = $resObject->getBody();
+        $response = json_decode($resJson, true);
+        return $response;
+    }
 }
