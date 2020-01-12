@@ -204,6 +204,7 @@ class JustService extends WxBaseService
      * 调用微信生成带参数二维码接口
      */
     public static function getAqrCodePath($scene, $page, $accessToken){
+        Yii::error('lisihao1111111111');
         $client = new \GuzzleHttp\Client();
         $resObject = $client->request("POST", "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=".$accessToken, [
             'form_params' => [
@@ -216,7 +217,7 @@ class JustService extends WxBaseService
         ]);
 
         $resJson = $resObject->getBody();
-        Yii::error('lisihao1111111111$res='.$resJson);
+        Yii::error('lisihao222222222222222$res='.$resJson);
 //        $response = json_decode($resJson, true);
         return $resJson;
     }
