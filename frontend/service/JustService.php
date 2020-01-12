@@ -216,7 +216,7 @@ class JustService extends WxBaseService
         ]);
 
         $resJson = $resObject->getBody();
-        file_put_contents('./test.jpg', $resJson);
+        Yii::error('lisihao1111111111$res='.$resJson);
 //        $response = json_decode($resJson, true);
         return $resJson;
     }
