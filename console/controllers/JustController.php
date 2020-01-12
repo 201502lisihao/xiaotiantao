@@ -2,7 +2,6 @@
 
 namespace console\controllers;
 
-use http\Client;
 use yii\console\Controller;
 
 class JustController extends Controller{
@@ -23,7 +22,7 @@ class JustController extends Controller{
         while ($flag && $minute <= 10){
             //请求微信获取accessToken
             //https请求方式: GET https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
-            $client = new Client();
+            $client = new \GuzzleHttp\Client();
             $response = $client->request('GET', self::WxGetAccessTokenUrl . '?grant_type=client_credential&appid=' . self::AppId .'&secret=' . self::AppSecret);
             if (!empty($response['access_token'])){
                 $accessToken = $response['access_token'];
