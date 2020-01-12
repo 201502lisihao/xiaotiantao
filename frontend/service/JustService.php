@@ -218,8 +218,8 @@ class JustService extends WxBaseService
             'json' => $params
         ]);
 
-        $resJson = $resObject->getBody();
-        $response = json_decode($resJson, true);
+        $response = $resObject->getBody();
+//        $response = json_decode($resJson, true);
 //        $response = json_decode($resJson, true);
         return $response;
     }

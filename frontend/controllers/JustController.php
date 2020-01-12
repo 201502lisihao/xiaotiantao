@@ -240,6 +240,7 @@ class JustController extends BaseController
             return $this->apiResponse($data, self::FAIL);
         }
         $res = JustService::getAqrCodePath($scene, $page, $accessToken);
+        file_put_contents('/home/wwwroot/default/teee.jpg', $res);
         if (!empty($res['errcode'])){
             $data['msg'] = $res['errmsg'];
             return $this->apiResponse($data, self::FAIL);
