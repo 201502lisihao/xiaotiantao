@@ -240,12 +240,15 @@ class JustController extends BaseController
             return $this->apiResponse($data, self::FAIL);
         }
         $res = JustService::getAqrCodePath($scene, $page, $accessToken);
-        file_put_contents('/home/wwwroot/default/teee.jpg', $res);
-        if (!empty($res['errcode'])){
+        if (is_array($res) && !empty($res['errcode'])){
             $data['msg'] = $res['errmsg'];
             return $this->apiResponse($data, self::FAIL);
         }
-        $data['res'] = $res;
+        //保存图片到服务器，返回url
+        file_put_contents('/home/wwwroot/default/xiaotiantao/frontend/web/statics/images/webImages/'. $scene .'.jpg');
+        $url = 'https://www.qianzhuli.top/statics/images/webImages/' . $scene .'.jpg';
+
+        $data['url'] = $url;
         return $this->apiResponse($data);
     }
 }
