@@ -232,7 +232,7 @@ class JustController extends BaseController
         $jsonData = file_get_contents('php://input');
         $params = json_decode($jsonData, true);
         $scene = $params['scene'] ?? '';
-        $page = $params['pagg'] ?? '';
+        $page = $params['page'] ?? '';
         $accessToken = $params['access_token'] ?? '';
         $data = array();
         if (empty($scene) || empty($page) || empty($accessToken)){
