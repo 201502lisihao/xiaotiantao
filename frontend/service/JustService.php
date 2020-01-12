@@ -206,14 +206,18 @@ class JustService extends WxBaseService
     public static function getAqrCodePath($scene, $page, $accessToken){
         $client = new \GuzzleHttp\Client();
         $resObject = $client->request("POST", "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=".$accessToken, [
-            'data' => [
+            'form_params' => [
                 'scene' => $scene,
                 'page' => $page
+            ],
+            'headers' => [
+                'Accept' => 'image/jpg'
             ]
         ]);
 
         $resJson = $resObject->getBody();
-        $response = json_decode($resJson, true);
-        return $response;
+        file_put_contents('./test.jpg', $resJson);
+//        $response = json_decode($resJson, true);
+        return $resJson;
     }
 }
