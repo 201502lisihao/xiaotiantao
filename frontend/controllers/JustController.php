@@ -84,10 +84,10 @@ class JustController extends BaseController
         //解密用户数据，保存在userData中
         //$userData = '';
         $wxCrypt = new WXBizDataCrypt(self::AppId, $sessionKey);
-        Yii::error('11111111'.json_encode($encryptedData));
-        Yii::error('11111111'.json_encode($iv));
+//        Yii::error('11111111'.json_encode($encryptedData));
+//        Yii::error('11111111'.json_encode($iv));
         $decryptCode = $wxCrypt->decryptData($encryptedData, $iv, $userData);
-        Yii::error('11111111'.json_encode($userData));
+//        Yii::error('11111111'.json_encode($userData));
 
         //直接拿openId当用户的utoken
         if ($decryptCode == 0) {
@@ -211,5 +211,18 @@ class JustController extends BaseController
             'raffle_ticket_list' => false
         );
         return $this->apiResponse($data, self::FAIL);
+    }
+
+    /**
+     * 小程序端获取access_token时调用
+     * access_token后端定时刷新，然后放入缓存
+     */
+    public function actionGetaccesstoken(){
+        $array = array();
+        $cache = Yii::$app->cache;
+        if ($cache->get('wx_access_token')){
+            $array['access_token'] = $cache->get('wx_access_token');
+        }
+        return $array;
     }
 }
