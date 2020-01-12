@@ -30,9 +30,11 @@ class JustController extends Controller{
                 $accessToken = $response['access_token'];
                 //存入缓存
                 $cache = Yii::$app->cahce;
-                $cache->set('wx_access_token', $accessToken);
+                $cache->set('wx_access_token', $accessToken, 7200);
                 $flag = false;
+                continue;
             }
+            sleep(10);
         }
     }
 }
