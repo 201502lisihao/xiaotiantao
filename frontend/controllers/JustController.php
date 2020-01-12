@@ -244,6 +244,7 @@ class JustController extends BaseController
             $data['msg'] = '未成功获取到小程序码，请确认参数正确后重试';
             return $this->apiResponse($data, self::FAIL);
         }
+        $data['res'] = $res;
         return $this->apiResponse($data);
     }
 }
