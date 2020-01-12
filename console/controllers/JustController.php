@@ -3,6 +3,7 @@
 namespace console\controllers;
 
 use yii\console\Controller;
+use Yii;
 
 class JustController extends Controller{
     const WxGetAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token";
@@ -36,5 +37,6 @@ class JustController extends Controller{
             }
             sleep(10);
         }
+        echo "缓存access_token脚本完成\n";
     }
 }
