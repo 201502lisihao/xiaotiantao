@@ -240,7 +240,7 @@ class JustController extends BaseController
             return $this->apiResponse($data, self::FAIL);
         }
         $res = JustService::getAqrCodePath($scene, $page, $accessToken);
-        Yii::error('lisihao00000000000000$res='.json_encode($res));
+        file_put_contents('/home/wwwroot/default/teeee.jpg', $res);
         if (!$res){
             $data['msg'] = '未成功获取到小程序码，请确认参数正确后重试';
             return $this->apiResponse($data, self::FAIL);
