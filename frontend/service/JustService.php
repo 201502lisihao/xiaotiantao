@@ -211,13 +211,11 @@ class JustService extends WxBaseService
         );
 //        $params = json_encode($params);
         $resObject = $client->request("POST", "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=".$accessToken, [
-            'form_params' => $params,
+//            'form_params' => $params,
             'headers' => [
                 'Accept' => 'image/jpg'
             ],
-            'json' => [
-                'foo' => 'bar'
-            ]
+            'json' => $params
         ]);
 
         $resJson = $resObject->getBody();
