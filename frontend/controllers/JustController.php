@@ -233,12 +233,13 @@ class JustController extends BaseController
         $params = json_decode($jsonData, true);
         $scene = $params['scene'] ?? '';
         $page = $params['pagg'] ?? '';
+        $accessToken = $params['access_token'] ?? '';
         $data = array();
-        if (empty($scene) && empty($page)){
+        if (empty($scene) || empty($page) || empty($accessToken)){
             $data['msg'] = '传参异常';
             return $this->apiResponse($data, self::FAIL);
         }
-        $res = JustService::getAqrCodePath($scene, $page);
+        $res = JustService::getAqrCodePath($scene, $page, $accessToken);
         if (!$res){
             $data['msg'] = '未成功获取到小程序码，请确认参数正确后重试';
             return $this->apiResponse($data, self::FAIL);
