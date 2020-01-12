@@ -23,7 +23,9 @@ class JustController extends Controller{
             //请求微信获取accessToken
             //https请求方式: GET https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
             $client = new \GuzzleHttp\Client();
-            $response = $client->request('GET', self::WxGetAccessTokenUrl . '?grant_type=client_credential&appid=' . self::AppId .'&secret=' . self::AppSecret);
+            $resObject = $client->request('GET', self::WxGetAccessTokenUrl . '?grant_type=client_credential&appid=' . self::AppId .'&secret=' . self::AppSecret);
+            $resJson = $resObject->getBody();
+            $response = json_decode($resJson, true);
             if (!empty($response['access_token'])){
                 $accessToken = $response['access_token'];
                 //存入缓存
