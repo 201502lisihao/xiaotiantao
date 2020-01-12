@@ -245,7 +245,7 @@ class JustController extends BaseController
             return $this->apiResponse($data, self::FAIL);
         }
         //保存图片到服务器，返回url
-        file_put_contents('/home/wwwroot/default/xiaotiantao/frontend/web/statics/images/webImages/'. $scene .'.png', base64_encode($res));
+        file_put_contents('/home/wwwroot/default/xiaotiantao/frontend/web/statics/images/webImages/'. $scene .'.png', $res);
         $url = 'https://www.qianzhuli.top/statics/images/webImages/' . $scene .'.png';
 
         $data['url'] = $url;
