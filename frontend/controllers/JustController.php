@@ -218,11 +218,11 @@ class JustController extends BaseController
      * access_token后端定时刷新，然后放入缓存
      */
     public function actionGetaccesstoken(){
-        $array = array();
+        $data = array();
         $cache = Yii::$app->cache;
         if ($cache->get('wx_access_token')){
-            $array['access_token'] = $cache->get('wx_access_token');
+            $data['access_token'] = $cache->get('wx_access_token');
         }
-        return $array;
+        return $this->apiResponse($data);
     }
 }
