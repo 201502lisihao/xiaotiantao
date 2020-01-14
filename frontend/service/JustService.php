@@ -251,7 +251,7 @@ class JustService extends WxBaseService
             $data['id'] = $userId;
             $data['open_id'] = $res->open_id;
             $data['session_key'] = $res->session_key;
-            $data['nickname'] = $res->nickname;
+            $data['nickname'] = base64_decode($res->nickname);
             $data['gender'] = $res->gender;
             $data['language'] = $res->language;
             $data['city'] = $res->city;

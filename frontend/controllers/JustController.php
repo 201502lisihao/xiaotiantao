@@ -182,7 +182,7 @@ class JustController extends BaseController
         $key = $userId . '_get_ticket_by_post';
         if ($cache->get($key)) {
             $data['msg'] = '该方式每人仅限获得一张奖券';
-            $this->apiResponse($data, self::FAIL);
+            return $this->apiResponse($data, self::FAIL);
         }
         $result = JustService::createTicket($userId, $channel);
         $cache->set($key, 1, $restOfTime);
@@ -269,13 +269,14 @@ class JustController extends BaseController
         //获取post请求来的json，并转成数组，获取参数
         $jsonData = file_get_contents('php://input');
         $params = json_decode($jsonData, true);
-        $friendUserId = $params['friendUserId'];
-        $userId = $params['userId'];
+        $friendUserId = $params['friendUserId'] ?? 0;
+        $userId = $params['userId'] ?? 0;
         $data = array();
         if (empty($friendUserId) || empty($userId)){
             $data['msg'] = '传参异常';
             return $this->apiResponse($data, self::FAIL);
         }
+
         $res = JustService::friendHelp($friendUserId, $userId);
         if ($res){
             $data['msg'] = '好友助力各得一张奖券成功';
