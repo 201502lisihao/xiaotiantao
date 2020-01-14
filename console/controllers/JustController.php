@@ -20,7 +20,7 @@ class JustController extends Controller{
     public function actionCacheaccesstoken(){
         $flag = true;
         $minute = date('i', time());
-        while ($flag && $minute <= 10){
+        while ($flag && $minute <= 58){
             //请求微信获取accessToken
             //https请求方式: GET https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
             $client = new \GuzzleHttp\Client();
@@ -36,7 +36,7 @@ class JustController extends Controller{
                 $flag = false;
                 continue;
             }
-            sleep(10);
+            sleep(60);
         }
         echo "缓存access_token脚本完成\n";
     }
