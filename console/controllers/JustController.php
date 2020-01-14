@@ -29,6 +29,7 @@ class JustController extends Controller{
             $response = json_decode($resJson, true);
             if (!empty($response['access_token'])){
                 $accessToken = $response['access_token'];
+                echo $accessToken;
                 //存入缓存
                 $cache = Yii::$app->cache;
                 $cache->set('wx_access_token', $accessToken, 7200);
