@@ -15,7 +15,6 @@ $this->title = '用户管理';
                     <th>性别</th>
                     <th>城市</th>
                     <th>注册时间</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +34,6 @@ $this->title = '用户管理';
                         ?></td>
                         <td><?= $value['city'] ?></td>
                         <td><?= date('Y-m-d H:i:s',$value['add_time']) ?></td>
-                        <td><a href="<?=Url::to(['site/deluser','id' => $value['id']])?>">删除</a></td>
                     </tr>
                 <?php endforeach;?> 
             </tbody>
