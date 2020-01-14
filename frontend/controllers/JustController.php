@@ -84,10 +84,7 @@ class JustController extends BaseController
         //解密用户数据，保存在userData中
         //$userData = '';
         $wxCrypt = new WXBizDataCrypt(self::AppId, $sessionKey);
-//        Yii::error('11111111'.json_encode($encryptedData));
-//        Yii::error('11111111'.json_encode($iv));
         $decryptCode = $wxCrypt->decryptData($encryptedData, $iv, $userData);
-//        Yii::error('11111111'.json_encode($userData));
 
         //直接拿openId当用户的utoken
         if ($decryptCode == 0) {
@@ -169,19 +166,35 @@ class JustController extends BaseController
     {
         //获取post请求来的json，并转成数组，获取参数
         $jsonData = file_get_contents('php://input');
+        $params = json_decode($jsonData, true);
+        $userId = $params['userId'] ?? '';
+        $channel = $params['channel'] ?? '';
         $data = array();
-        if (!empty($jsonData)) {
-            $params = json_decode($jsonData, true);
-            //获取到参数了，写库下单，默认订单状态是未支付
-            $result = JustService::createTicket($params);
-            if ($result) {
-                $data = array(
-                    'orderId' => $result,
-                    'msg' => '奖券获取成功'
-                );
-                return $this->apiResponse($data);
-            }
+        if (empty($userId) || empty($channel)){
+            $data['msg'] = '传参异常';
+            return $this->apiResponse($data, self::FAIL);
         }
+
+        //下单锁，每人1次奖券flag获取机会
+        //一个月有效期
+        $restOfTime = 2592000;
+        $cache = Yii::$app->cache;
+        $key = $userId . '_get_ticket_by_post';
+        if ($cache->get($key)) {
+            $data['msg'] = '该方式每人仅限获得一张奖券';
+            $this->apiResponse($data, self::FAIL);
+        }
+        $result = JustService::createTicket($userId, $channel);
+        $cache->set($key, 1, $restOfTime);
+
+        if ($result) {
+            $data = array(
+                'orderId' => $result,
+                'msg' => '奖券获取成功'
+            );
+            return $this->apiResponse($data);
+        }
+        $data['msg'] = '奖券获取失败';
         return $this->apiResponse($data, self::FAIL);
     }
 
@@ -250,5 +263,25 @@ class JustController extends BaseController
 
         $data['url'] = $url;
         return $this->apiResponse($data);
+    }
+
+    public function actionFriendhelp(){
+        //获取post请求来的json，并转成数组，获取参数
+        $jsonData = file_get_contents('php://input');
+        $params = json_decode($jsonData, true);
+        $friendUserId = $params['friendUserId'];
+        $userId = $params['userId'];
+        $data = array();
+        if (empty($friendUserId) || empty($userId)){
+            $data['msg'] = '传参异常';
+            return $this->apiResponse($data, self::FAIL);
+        }
+        $res = JustService::friendHelp($friendUserId, $userId);
+        if ($res){
+            $data['msg'] = '好友助力各得一张奖券成功';
+            return $this->apiResponse($data);
+        }
+        $data['msg'] = '好友助力各得一张奖券失败';
+        return $this->apiResponse($data, self::FAIL);
     }
 }

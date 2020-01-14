@@ -134,20 +134,10 @@ class JustService extends WxBaseService
     /**
      * 小程序通知用户生成海报完成，奖励抽奖券
      */
-    public static function createTicket($params)
+    public static function createTicket($userId, $channel)
     {
-        if (!isset($params['userId'])) {
-            return 0;
-        }
-        //下单锁，每人1次奖券海报获取机会
-        //一个月有效期
-        $restOfTime = 2592000;
         $cache = Yii::$app->cache;
-        $key = $params['userId'] . '_get_ticket_by_post';
-        if ($cache->get($key)) {
-            return 0;
-        }
-
+        $restOfTime = 2592000;
         //取当前奖券发到多少号了,自增
         if($cache->get('ticket_cache_id')){
             $ticketCacheId = $cache->get('ticket_cache_id');
@@ -160,8 +150,8 @@ class JustService extends WxBaseService
 
         $model = new JustTicketModel();
         $model->ticket_code = self::createTicketCode($currentTicketCacheId);
-        $model->user_id = $params['userId'];
-        $model->channel = $params['channel'];
+        $model->user_id = $userId;
+        $model->channel = $channel;
         $model->create_at = time();
         //以下暂时写死
         $model->ticket_status = 1; //1有效、2无效
@@ -169,7 +159,6 @@ class JustService extends WxBaseService
         //执行存库
         if ($model->save(false)) {
             $ret = $model->attributes['id'];
-            $cache->set($key, 1, $restOfTime);
         } else {
             $ret = 0;
         }
@@ -220,5 +209,57 @@ class JustService extends WxBaseService
 
         $response = $resObject->getBody();
         return $response;
+    }
+
+    /**
+     * @param $friendUserId
+     * @param $userId
+     * 好友助力得奖券
+     */
+    public static function friendHelp($friendUserId, $userId){
+        //限制：同一个好友只能助力一次
+        $cache = Yii::$app->cache;
+        if ($cache->get('newYear'.$friendUserId.'&'.$userId)){
+            return false;
+        }
+        $cache->set('newYear'.$friendUserId.'&'.$userId, 1, 30*86400);
+
+        //获取用户信息
+        $friendUserInfo = self::getUserInfoByUserId($friendUserId);
+        $userInfo = self::getUserInfoByUserId($userId);
+        $friendChannel = '系统赠送';
+        $userChannel = '系统赠送';
+        if (!empty($friendUserInfo['nickname'])){
+            $userChannel = '助力好友'.$friendUserInfo['nickname'];
+        }
+        if (!empty($userInfo['nickname'])){
+            $friendChannel = '来自' . $userInfo['nickname'] . '的好友助力';
+        }
+
+        //给friend加奖券
+        self::createTicket($friendUserId, $friendChannel);
+        //给自己也加奖券
+        self::createTicket($friendUserId, $userChannel);
+
+        return true;
+    }
+
+    public static function getUserInfoByUserId($userId){
+        $res = JustUserModel::find()->where(['id'=>$userId])->one();
+        $data = array();
+        if($res){
+            $data['id'] = $userId;
+            $data['open_id'] = $res->open_id;
+            $data['session_key'] = $res->session_key;
+            $data['nickname'] = $res->nickname;
+            $data['gender'] = $res->gender;
+            $data['language'] = $res->language;
+            $data['city'] = $res->city;
+            $data['province'] = $res->province;
+            $data['country'] = $res->country;
+            $data['headimg'] = $res->headimg;
+        }
+
+        return $data;
     }
 }
