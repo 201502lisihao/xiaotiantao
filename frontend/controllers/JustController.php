@@ -301,7 +301,7 @@ class JustController extends BaseController
 
         //从缓存中取开奖结果
         $cache = Yii::$app->cache;
-        if ($cache->get('winResult_2020')){
+        if ($cache->get('winner_info_2020')){
             $resultArr = @unserialize($cache->get('winner_info_2020'));
             $data['win_code'] = $resultArr['win_code'];
             $data['win_user_nickname'] = $resultArr['win_user_nickname'];
