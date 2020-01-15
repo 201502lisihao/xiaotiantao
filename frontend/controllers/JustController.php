@@ -294,15 +294,15 @@ class JustController extends BaseController
         $data = array();
 
         //test
-        $data['win_code'] = '';
-        $data['win_user_nickname'] = '';
-        $data['win_user_img_path'] = '';
-        return $this->apiResponse($data);
+        //$data['win_code'] = '';
+        //$data['win_user_nickname'] = '';
+        //$data['win_user_img_path'] = '';
+        //return $this->apiResponse($data);
 
         //从缓存中取开奖结果
         $cache = Yii::$app->cache;
         if ($cache->get('winResult_2020')){
-            $resultArr = @unserialize($cache->get('winResult_2020'));
+            $resultArr = @unserialize($cache->get('winner_info_2020'));
             $data['win_code'] = $resultArr['win_code'];
             $data['win_user_nickname'] = $resultArr['win_user_nickname'];
             $data['win_user_img_path'] = $resultArr['win_user_img_path'];

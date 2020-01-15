@@ -3,6 +3,7 @@
 namespace console\controllers;
 
 use common\models\JustTicketModel;
+use common\models\JustUserModel;
 use yii\console\Controller;
 use Yii;
 
@@ -43,9 +44,50 @@ class JustController extends Controller{
     }
 
     // 2020年1月31日20:00开奖
-    // 0 */1 * * * php /root/xiaotiantao/yii just/cachewinresult
+    // 0 20 31 1 * php /root/xiaotiantao/yii just/cachewinresult
     public function actionCachewinresult(){
-        $result = shuffle(JustTicketModel::find()->asArray()->all())[0];
-        var_dump($result);
+        $time = 1580472000;
+        $flag = true;
+        $num = 0;
+            
+        while($flag){
+            if(10 < ++$num){
+                break;
+            }
+            Yii::info('新年开奖脚本第' . $num . '次执行。');
+
+            $result = JustTicketModel::find()->where(['<=', 'create_at', $time])->asArray()->all();
+            if( ! empty($result)){
+                shuffle($result);
+                $winner = $result[0];
+                $code = $winner['ticket_code'];
+                $userId = $winner['user_id'];
+                //查用户信息
+                $userInfo = JustUserModel::find()->where(['id' => $userId])->asArray()->one();
+                if( ! empty($userInfo)){
+                    $nickname = $userInfo['nickname'];
+                    $headimg = $userInfo['headimg'];
+                    //放入缓存
+                    $val = serialize(array(
+                        'win_code' => $code,
+                        'win_user_nickname' => $nickname,
+                        'win_user_img_path' => $headimg
+                    ));
+                    var_dump($val);
+                    $cache = Yii::$app->cache;
+                    if($cache->set('winner_info_2020', $val, 30*86400)){
+                        $flag = false;
+                    }
+                }
+                
+            }            
+            sleep(10);
+        }
+
+        if($flag){
+            Yii::info('[开奖脚本] 执行失败，执行' . $num . '次');
+        } else {
+            Yii::info('[开奖脚本] 执行成功!');
+        }    
     }
 }
