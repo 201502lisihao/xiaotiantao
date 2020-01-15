@@ -285,4 +285,30 @@ class JustController extends BaseController
         $data['msg'] = '好友助力各得一张奖券失败';
         return $this->apiResponse($data, self::FAIL);
     }
+
+
+    /**
+     * 获取新年开奖信息
+     */
+    public function actionGetwininfo() {
+        $data = array();
+
+        //test
+        $data['win_code'] = '';
+        $data['win_user_nickname'] = '';
+        $data['win_user_img_path'] = '';
+        return $this->apiResponse($data);
+
+        //从缓存中取开奖结果
+        $cache = Yii::$app->cache;
+        if ($cache->get('winResult_2020')){
+            $resultArr = @unserialize($cache->get('winResult_2020'));
+            $data['win_code'] = $resultArr['win_code'];
+            $data['win_user_nickname'] = $resultArr['win_user_nickname'];
+            $data['win_user_img_path'] = $resultArr['win_user_img_path'];
+            return $this->apiResponse($data);
+        }
+        $data['msg'] = '获取开奖信息失败';
+        return $this->apiResponse($data, self::FAIL);
+    }
 }

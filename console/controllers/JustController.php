@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\models\JustTicketModel;
 use yii\console\Controller;
 use Yii;
 
@@ -39,5 +40,12 @@ class JustController extends Controller{
             sleep(60);
         }
         echo "缓存access_token脚本完成\n";
+    }
+
+    // 2020年1月31日20:00开奖
+    // 0 */1 * * * php /root/xiaotiantao/yii just/cachewinresult
+    public function actionCachewinresult(){
+        $result = shuffle(JustTicketModel::find()->asArray()->all())[0];
+        var_dump($result);
     }
 }
