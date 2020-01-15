@@ -304,7 +304,7 @@ class JustController extends BaseController
         if ($cache->get('winner_info_2020')){
             $resultArr = @unserialize($cache->get('winner_info_2020'));
             $data['win_code'] = $resultArr['win_code'];
-            $data['win_user_nickname'] = $resultArr['win_user_nickname'];
+            $data['win_user_nickname'] = base64_decode($resultArr['win_user_nickname']);
             $data['win_user_img_path'] = $resultArr['win_user_img_path'];
             return $this->apiResponse($data);
         }
