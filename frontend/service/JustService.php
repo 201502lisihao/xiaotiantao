@@ -227,6 +227,7 @@ class JustService extends WxBaseService
         //获取用户信息
         $friendUserInfo = self::getUserInfoByUserId($friendUserId);
         $userInfo = self::getUserInfoByUserId($userId);
+
         $friendChannel = '系统赠送';
         $userChannel = '系统赠送';
         if (!empty($friendUserInfo['nickname'])){
@@ -236,10 +237,15 @@ class JustService extends WxBaseService
             $friendChannel = '来自' . $userInfo['nickname'] . '的好友助力';
         }
 
-        //给friend加奖券
-        self::createTicket($friendUserId, $friendChannel);
-        //给自己也加奖券
-        self::createTicket($friendUserId, $userChannel);
+        //自己扫自己的邀请码
+        if ($friendUserId == $userId){
+            self::createTicket($friendUserId, $friendChannel);
+        } else {
+            //给friend加奖券
+            self::createTicket($friendUserId, $friendChannel);
+            //给自己也加奖券
+            self::createTicket($friendUserId, $userChannel);
+        }
 
         return true;
     }
