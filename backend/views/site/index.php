@@ -4,7 +4,7 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
-$this->title = '管理后台-小田新闻网';
+$this->title = 'lisihao管理后台';
 ?>
 <div class="site-index">
 

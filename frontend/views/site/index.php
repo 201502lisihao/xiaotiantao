@@ -6,7 +6,7 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
-$this->title = '小田新闻网';
+$this->title = 'Just清单';
 ?>
 
 <div class="site-index">
