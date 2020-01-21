@@ -28,7 +28,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'just', 'deljustuser', 'suggest', 'dealsuggest', 'deletesuggest'],
+                        'actions' => ['logout', 'index', 'justuser', 'deljustuser', 'cache', 'suggest', 'dealsuggest', 'deletesuggest'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -87,12 +87,35 @@ class SiteController extends Controller
     }
 
     //Just清单用户管理
-    public function actionJust()
+    public function actionJustuser()
     {
         $model = new JustUserModel();
         $result = $model->find()->asArray()->all();
         //var_dump($result);exit;
-        return $this->render('just',['data' => array_reverse($result)]);
+        return $this->render('justuser',['data' => array_reverse($result)]);
+    }
+
+    /**
+     * 删除用户
+     */
+    public function actionDeljustuser($id){
+        $model = new JustUserModel();
+        $query = $model->find()->where(['id' => $id])->one();
+        if (!empty($query)) {
+            $query->delete();
+        }
+        return $this->actionJustuser();
+    }
+
+    /**
+     * 缓存管理
+     */
+    public function actionCache(){
+        $cache = Yii::$app->cache();
+        //获取全部缓存
+        $cacheList = $cache->keys('*');
+        var_dump($cacheList);
+//        return $this->render('cache', array('data' => $cacheList));
     }
 
     //Just清单意见管理
@@ -124,18 +147,6 @@ class SiteController extends Controller
     }
 
     /**
-     * 删除用户
-     */
-    public function actionDeljustuser($id){
-        $model = new JustUserModel();
-        $query = $model->find()->where(['id' => $id])->one();
-        if (!empty($query)) {
-            $query->delete();
-        }
-        return $this->actionJust();
-    }
-
-    /**
      * 删除意见
      */
     public function actionDeletesuggest($id){
@@ -146,44 +157,5 @@ class SiteController extends Controller
         }
         return $this->actionSuggest();
     }
-
-//    //新闻管理
-//
-//    public function actionDelnews($id){
-//        $model = new PostsModel();
-//        $query = $model->find()->where(['id' => $id])->one();
-//        if (!empty($query)) {
-//            $query->delete();
-//        }
-//        return $this->actionNews();
-//    }
-//
-//    //删除新闻 增删改---删除
-//
-//    public function actionNews()
-//    {
-//        $model = new PostsModel();
-//        $result = $model->find()->select(['id', 'title', 'summary', 'label_img', 'is_valid', 'user_name'])->asArray()->all();
-//        //var_dump($result);exit;
-//        return $this->render('news', ['data' => $result]);
-//    }
-//
-    //审核新闻
-
-    public function actionDealsuggest($id){
-        $model = new JustSuggestModel();
-        $query = $model->find()->where(['id' => $id])->one();
-        //完成审核
-        $query->status = 1;
-        $query->save();
-        return $this->actionSuggest();
-    }
-//
-//    //查看新闻
-//    public function actionLooknews($id){
-//        $model = new PostsModel();
-//        $query = $model->find()->where(['id' => $id])->asArray()->one();
-//        return $this->render('look',['post' => $query]);
-//    }
 
 }

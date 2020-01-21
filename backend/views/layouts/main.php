@@ -42,8 +42,9 @@ AppAsset::register($this);
     } else {
         $menuItems = [
             ['label' => '首页', 'url' => ['/site/index']],
-            ['label' => 'Just清单', 'url' => ['/site/just']],
-            ['label' => '群众反馈', 'url' => ['/site/suggest']],
+            ['label' => '用户管理', 'url' => ['/site/justuser']],
+            ['label' => '缓存管理', 'url' => ['/site/cache']],
+            ['label' => '建议管理', 'url' => ['/site/suggest']],
             //['label' => '文章管理', 'url' => ['/site/news']]
         ];
         $menuItems[] = [
