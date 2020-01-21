@@ -111,7 +111,7 @@ class SiteController extends Controller
      * 缓存管理
      */
     public function actionCache(){
-        $cache = Yii::$app->cache();
+        $cache = Yii::$app->redis;
         //获取全部缓存
         $cacheList = $cache->keys('*');
         var_dump($cacheList);
