@@ -244,7 +244,7 @@ class JustService extends WxBaseService
             //给friend加奖券
             self::createTicket($friendUserId, $friendChannel);
             //给自己也加奖券
-            self::createTicket($friendUserId, $userChannel);
+            self::createTicket($userId, $userChannel);
         }
 
         return true;
