@@ -4,14 +4,17 @@ use yii\helpers\Url;
 
 $this->title = '用户管理';
 ?>
-<div class="col-sm-12">
-    <button class="btn btn-primary" type="button">
-        注册用户数：<span class="badge"><?= $count?></span>
-    </button>
-    <span style="color: red">+<?= $add_count?></span>
-</div>
-
 <div class="row table-responsive">
+    <div class="col-sm-12">
+        <button class="btn btn-primary" type="button">
+            注册用户数：<span class="badge"><?= $count?></span>
+            <?php
+            if ($add_count != 0){
+                echo '<span style="color: red">+' . $add_count . '</span>';
+            }
+            ?>
+        </button>
+    </div>
     <div class="col-sm-12">
         <table class="table table-striped table-hover">
             <thead>
