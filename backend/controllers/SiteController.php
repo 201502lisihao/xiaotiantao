@@ -90,7 +90,7 @@ class SiteController extends Controller
     public function actionJustuser()
     {
         $model = new JustUserModel();
-        $result = $model->find()->orderBy("id ASC")->limit(50)->asArray()->all();
+        $result = $model->find()->orderBy("id DESC")->limit(50)->asArray()->all();
         // 获取最新总数
         $count = $model->find()->count();
         // 获取上次请求的总数
