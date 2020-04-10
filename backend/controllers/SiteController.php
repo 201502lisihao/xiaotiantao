@@ -95,7 +95,7 @@ class SiteController extends Controller
         $count = $model->find()->count();
         // 获取上次请求的总数
         $cacheKey = "last_time_user_count";
-        $cache = Yii::$app->cache();
+        $cache = Yii::$app->cache;
 
         $addCount = 0;
         if ($cache->get($cacheKey)){
