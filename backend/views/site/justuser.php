@@ -6,8 +6,11 @@ $this->title = '用户管理';
 ?>
 <div class="row table-responsive">
     <div class="col-sm-12">
-        注册用户数：<?= $count?>
+        <button class="btn btn-primary" type="button">
+            注册用户数：<span class="badge"><?= $count?></span>
+        </button>
     </div>
+    
     <div class="col-sm-12">
         <table class="table table-striped table-hover">
             <thead>
