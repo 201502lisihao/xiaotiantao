@@ -6,6 +6,9 @@ $this->title = '用户管理';
 ?>
 <div class="row table-responsive">
     <div class="col-sm-12">
+        注册用户数：<?= $count?>
+    </div>
+    <div class="col-sm-12">
         <table class="table table-striped table-hover">
             <thead>
                 <tr>

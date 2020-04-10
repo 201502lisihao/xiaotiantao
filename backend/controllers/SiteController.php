@@ -90,9 +90,10 @@ class SiteController extends Controller
     public function actionJustuser()
     {
         $model = new JustUserModel();
-        $result = $model->find()->asArray()->all();
+        $result = $model->find()->orderBy("id DESC")->limit(50)->asArray()->all();
+        $count = $model->find()->count();
         //var_dump($result);exit;
-        return $this->render('justuser',['data' => array_reverse($result)]);
+        return $this->render('justuser',['data' => array_reverse($result), 'count' => $count]);
     }
 
     /**
