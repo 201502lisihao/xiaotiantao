@@ -91,6 +91,7 @@ class SiteController extends Controller
     {
         $model = new JustUserModel();
         $result = $model->find()->orderBy("id DESC")->limit(50)->asArray()->all();
+        array_reverse($result);
         // 获取最新总数
         $count = $model->find()->count();
         // 获取上次请求的总数
