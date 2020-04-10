@@ -90,10 +90,21 @@ class SiteController extends Controller
     public function actionJustuser()
     {
         $model = new JustUserModel();
-        $result = $model->find()->orderBy("id DESC")->limit(50)->asArray()->all();
+        $result = $model->find()->orderBy("id ASC")->limit(50)->asArray()->all();
+        // 获取最新总数
         $count = $model->find()->count();
+        // 获取上次请求的总数
+        $cacheKey = "last_time_user_count";
+        $cache = Yii::$app->cache();
+
+        $addCount = 0;
+        if ($cache->get($cacheKey)){
+            $addCount = $count - $cache->get($cacheKey);
+        }
+        $cache->set($cacheKey, $count);
+
         //var_dump($result);exit;
-        return $this->render('justuser',['data' => array_reverse($result), 'count' => $count]);
+        return $this->render('justuser',['data' => array_reverse($result), 'count' => $count, 'add_count' => $addCount]);
     }
 
     /**

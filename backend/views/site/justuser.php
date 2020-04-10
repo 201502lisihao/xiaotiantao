@@ -4,18 +4,18 @@ use yii\helpers\Url;
 
 $this->title = '用户管理';
 ?>
+<div class="col-sm-12">
+    <button class="btn btn-primary" type="button">
+        注册用户数：<span class="badge"><?= $count?></span>
+    </button>
+    <p style="color: red">+<?= $add_count?></p>
+</div>
 <div class="row table-responsive">
-    <div class="col-sm-12">
-        <button class="btn btn-primary" type="button">
-            注册用户数：<span class="badge"><?= $count?></span>
-        </button>
-    </div>
-    
     <div class="col-sm-12">
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>编号</th>
+<!--                    <th>编号</th>-->
                     <th>微信头像</th>
                     <th>微信昵称</th>
                     <th>性别</th>
@@ -26,7 +26,7 @@ $this->title = '用户管理';
             <tbody>
                 <?php foreach($data as $key => $value): ?>
                     <tr>
-                        <td><?= $value['id'] ?></td>
+<!--                        <td>--><?//= $value['id'] ?><!--</td>-->
                         <td><img style="width:70px;height:70px;" src="<?= $value['headimg'] ?>" alt="<?=$value['nickname']?>"></td>
                         <td><?= base64_decode($value['nickname']) ?></td>
                         <td><?php
