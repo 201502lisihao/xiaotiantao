@@ -4,7 +4,7 @@ use yii\helpers\Url;
 
 $this->title = '用户管理';
 ?>
-<div>
+<div style="margin-bottom: 20px">
     <button class="btn btn-primary" type="button">
         注册用户数：<span class="badge"><?= $count?></span>
         <?php
